@@ -40,11 +40,6 @@ const AdminClasses = () => {
   const [thumbnailFile, setThumbnailFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  if (!user) {
-    navigate("/auth");
-    return null;
-  }
-
   const { data: classes, isLoading } = useQuery({
     queryKey: ["admin-video-classes"],
     queryFn: async () => {
@@ -68,6 +63,11 @@ const AdminClasses = () => {
       toast({ title: "Aula removida com sucesso!" });
     },
   });
+
+  if (!user) {
+    navigate("/auth");
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
