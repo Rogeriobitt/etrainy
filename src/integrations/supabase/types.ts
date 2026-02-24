@@ -41,6 +41,45 @@ export type Database = {
         }
         Relationships: []
       }
+      video_classes: {
+        Row: {
+          calories: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          duration: string
+          id: string
+          tag: string
+          thumbnail_url: string | null
+          title: string
+          video_url: string
+        }
+        Insert: {
+          calories?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          duration: string
+          id?: string
+          tag: string
+          thumbnail_url?: string | null
+          title: string
+          video_url: string
+        }
+        Update: {
+          calories?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          duration?: string
+          id?: string
+          tag?: string
+          thumbnail_url?: string | null
+          title?: string
+          video_url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
