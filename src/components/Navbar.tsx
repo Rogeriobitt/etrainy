@@ -28,6 +28,9 @@ const Navbar = () => {
           <a href="#aulas" className="text-muted-foreground hover:text-foreground transition-colors">Aulas</a>
           <a href="#treinos" className="text-muted-foreground hover:text-foreground transition-colors">Treinos</a>
           {user && (
+            <a href="/admin/classes" className="text-muted-foreground hover:text-foreground transition-colors">Admin</a>
+          )}
+          {user && (
             <span className="text-muted-foreground flex items-center gap-1">
               <User className="w-4 h-4" />
               {user.user_metadata?.full_name || user.email}
@@ -50,6 +53,9 @@ const Navbar = () => {
         <div className="md:hidden bg-card border-t border-border px-6 py-4 flex flex-col gap-4">
           <a href="#aulas" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Aulas</a>
           <a href="#treinos" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Treinos</a>
+          {user && (
+            <a href="/admin/classes" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Admin</a>
+          )}
           <button
             onClick={() => { handleAuthClick(); setOpen(false); }}
             className="gradient-accent px-5 py-2 rounded-lg text-primary-foreground font-semibold text-sm"
