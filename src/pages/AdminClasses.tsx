@@ -64,9 +64,26 @@ const AdminClasses = () => {
     },
   });
 
+  if (loading) return null;
+
   if (!user) {
     navigate("/auth");
     return null;
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="container mx-auto px-6 pt-24 pb-12 text-center">
+          <h1 className="text-3xl font-heading tracking-wider mb-4">ACESSO RESTRITO</h1>
+          <p className="text-muted-foreground">Apenas administradores podem acessar esta página.</p>
+          <Button onClick={() => navigate("/")} className="mt-6 gradient-accent text-primary-foreground font-semibold">
+            Voltar ao Início
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {

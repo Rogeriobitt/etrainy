@@ -250,6 +250,8 @@ const Profile = () => {
             )}
           </CardContent>
         </Card>
+        {/* Bioimpedance */}
+        <BioimpedanceSection />
       </div>
     </div>
   );
