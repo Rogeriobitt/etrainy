@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { Menu, X, Dumbbell, LogOut, User } from "lucide-react";
+import { Menu, X, Dumbbell, LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const { user, signOut } = useAuth();
+  const { user, isAdmin, signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleAuthClick = () => {
@@ -30,7 +30,7 @@ const Navbar = () => {
           {user && (
             <a href="/profile" className="text-muted-foreground hover:text-foreground transition-colors">Meu Perfil</a>
           )}
-          {user && (
+          {isAdmin && (
             <a href="/admin/classes" className="text-muted-foreground hover:text-foreground transition-colors">Admin</a>
           )}
           <button
@@ -53,7 +53,7 @@ const Navbar = () => {
           {user && (
             <a href="/profile" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Meu Perfil</a>
           )}
-          {user && (
+          {isAdmin && (
             <a href="/admin/classes" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Admin</a>
           )}
           <button

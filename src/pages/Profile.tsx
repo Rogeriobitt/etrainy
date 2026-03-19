@@ -16,6 +16,7 @@ import {
   ChartTooltipContent,
 } from "@/components/ui/chart";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from "recharts";
+import BioimpedanceSection from "@/components/BioimpedanceSection";
 
 const chartConfig = {
   weight: {
@@ -249,6 +250,8 @@ const Profile = () => {
             )}
           </CardContent>
         </Card>
+        {/* Bioimpedance */}
+        <BioimpedanceSection />
       </div>
     </div>
   );
