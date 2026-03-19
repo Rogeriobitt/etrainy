@@ -17,27 +17,66 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          birth_date: string | null
           created_at: string
           full_name: string | null
+          goal: string | null
+          height: number | null
           id: string
           updated_at: string
           user_id: string
+          weight: number | null
         }
         Insert: {
           avatar_url?: string | null
+          birth_date?: string | null
           created_at?: string
           full_name?: string | null
+          goal?: string | null
+          height?: number | null
           id?: string
           updated_at?: string
           user_id: string
+          weight?: number | null
         }
         Update: {
           avatar_url?: string | null
+          birth_date?: string | null
           created_at?: string
           full_name?: string | null
+          goal?: string | null
+          height?: number | null
           id?: string
           updated_at?: string
           user_id?: string
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      progress_entries: {
+        Row: {
+          created_at: string
+          id: string
+          note: string | null
+          recorded_at: string
+          user_id: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          recorded_at?: string
+          user_id: string
+          weight: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          note?: string | null
+          recorded_at?: string
+          user_id?: string
+          weight?: number
         }
         Relationships: []
       }
