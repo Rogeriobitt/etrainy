@@ -28,13 +28,10 @@ const Navbar = () => {
           <a href="#aulas" className="text-muted-foreground hover:text-foreground transition-colors">Aulas</a>
           <a href="#treinos" className="text-muted-foreground hover:text-foreground transition-colors">Treinos</a>
           {user && (
-            <a href="/admin/classes" className="text-muted-foreground hover:text-foreground transition-colors">Admin</a>
+            <a href="/profile" className="text-muted-foreground hover:text-foreground transition-colors">Meu Perfil</a>
           )}
           {user && (
-            <span className="text-muted-foreground flex items-center gap-1">
-              <User className="w-4 h-4" />
-              {user.user_metadata?.full_name || user.email}
-            </span>
+            <a href="/admin/classes" className="text-muted-foreground hover:text-foreground transition-colors">Admin</a>
           )}
           <button
             onClick={handleAuthClick}
