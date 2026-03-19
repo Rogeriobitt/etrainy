@@ -51,6 +51,9 @@ const Navbar = () => {
           <a href="#aulas" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Aulas</a>
           <a href="#treinos" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Treinos</a>
           {user && (
+            <a href="/profile" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Meu Perfil</a>
+          )}
+          {user && (
             <a href="/admin/classes" className="text-muted-foreground hover:text-foreground transition-colors" onClick={() => setOpen(false)}>Admin</a>
           )}
           <button
