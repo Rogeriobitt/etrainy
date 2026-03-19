@@ -26,7 +26,7 @@ interface VideoClass {
 }
 
 const AdminClasses = () => {
-  const { user } = useAuth();
+  const { user, isAdmin, loading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
