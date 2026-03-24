@@ -33,7 +33,7 @@ const Hero = () => {
           </p>
           <div className="flex flex-wrap gap-4">
             <button
-              onClick={() => navigate("/auth?cadastro=true")}
+              onClick={() => navigate("/cadastro/aluno")}
               className="gradient-accent px-8 py-4 rounded-lg font-body font-semibold text-primary-foreground flex items-center gap-2 hover:opacity-90 transition-opacity"
             >
               <Play className="w-5 h-5" />
