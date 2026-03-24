@@ -1,10 +1,12 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Sparkles, Loader2, CheckCircle2, Info, RefreshCw } from "lucide-react";
+import { ArrowLeft, Sparkles, Loader2, CheckCircle2, Info, RefreshCw, AlertTriangle } from "lucide-react";
+import { evolveWorkoutPlan } from "@/lib/workoutEvolution";
+import { toast } from "@/hooks/use-toast";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   ativa: { label: "Ativa", color: "text-green-400" },
