@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Loader2, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
+import { selectExercisesForDay } from "@/lib/exerciseSelector";
 
 const DIVISION_MAP: Record<number, { division: string; description: string; workouts: { name: string; muscles: string }[] }> = {
   2: {
@@ -59,68 +60,6 @@ const DIVISION_MAP: Record<number, { division: string; description: string; work
     ],
   },
 };
-
-const SAMPLE_EXERCISES: Record<string, { name: string; sets: string; reps: string }[]> = {
-  "Peito + Tríceps": [
-    { name: "Supino reto com barra", sets: "4", reps: "8-10" },
-    { name: "Supino inclinado com halteres", sets: "3", reps: "10-12" },
-    { name: "Crossover na polia", sets: "3", reps: "12-15" },
-    { name: "Tríceps corda na polia", sets: "3", reps: "12-15" },
-    { name: "Tríceps francês", sets: "3", reps: "10-12" },
-  ],
-  "Costas + Bíceps": [
-    { name: "Puxada frontal", sets: "4", reps: "8-10" },
-    { name: "Remada curvada", sets: "3", reps: "10-12" },
-    { name: "Remada unilateral", sets: "3", reps: "10-12" },
-    { name: "Rosca direta com barra", sets: "3", reps: "10-12" },
-    { name: "Rosca alternada", sets: "3", reps: "12" },
-  ],
-  "Pernas + Abdômen": [
-    { name: "Agachamento livre", sets: "4", reps: "8-10" },
-    { name: "Leg press 45°", sets: "3", reps: "10-12" },
-    { name: "Cadeira extensora", sets: "3", reps: "12-15" },
-    { name: "Mesa flexora", sets: "3", reps: "12-15" },
-    { name: "Panturrilha em pé", sets: "4", reps: "15-20" },
-    { name: "Abdominal infra", sets: "3", reps: "15-20" },
-  ],
-  "Peito + Tríceps + Ombros": [
-    { name: "Supino reto com barra", sets: "4", reps: "8-10" },
-    { name: "Supino inclinado com halteres", sets: "3", reps: "10-12" },
-    { name: "Desenvolvimento com halteres", sets: "3", reps: "10-12" },
-    { name: "Elevação lateral", sets: "3", reps: "12-15" },
-    { name: "Tríceps corda", sets: "3", reps: "12-15" },
-  ],
-  "Costas + Bíceps + Tríceps": [
-    { name: "Puxada frontal", sets: "4", reps: "8-10" },
-    { name: "Remada curvada", sets: "3", reps: "10-12" },
-    { name: "Rosca direta", sets: "3", reps: "10-12" },
-    { name: "Rosca martelo", sets: "3", reps: "12" },
-  ],
-  "Peito + Costas + Ombros": [
-    { name: "Supino reto", sets: "4", reps: "8-10" },
-    { name: "Puxada frontal", sets: "4", reps: "8-10" },
-    { name: "Desenvolvimento", sets: "3", reps: "10-12" },
-    { name: "Elevação lateral", sets: "3", reps: "12-15" },
-  ],
-  "Pernas + Bíceps + Tríceps": [
-    { name: "Agachamento livre", sets: "4", reps: "8-10" },
-    { name: "Leg press", sets: "3", reps: "10-12" },
-    { name: "Mesa flexora", sets: "3", reps: "12-15" },
-    { name: "Rosca direta", sets: "3", reps: "10-12" },
-    { name: "Tríceps corda", sets: "3", reps: "12-15" },
-  ],
-};
-
-function getExercisesForMuscles(muscles: string) {
-  if (SAMPLE_EXERCISES[muscles]) return SAMPLE_EXERCISES[muscles];
-  // Fallback
-  return [
-    { name: "Exercício 1", sets: "3", reps: "10-12" },
-    { name: "Exercício 2", sets: "3", reps: "10-12" },
-    { name: "Exercício 3", sets: "3", reps: "12-15" },
-    { name: "Exercício 4", sets: "3", reps: "12-15" },
-  ];
-}
 
 const OBJECTIVES: Record<string, string> = {
   hypertrophy: "Hipertrofia",
@@ -227,12 +166,13 @@ const WorkoutAssistant = () => {
 
         if (dayError) throw dayError;
 
-        const exercises = getExercisesForMuscles(w.muscles);
+        const exercises = await selectExercisesForDay(w.muscles, level, location, objective);
         const exerciseRows = exercises.map((ex, j) => ({
           workout_day_id: day.id,
           exercise_name: ex.name,
           sets: ex.sets,
           reps: ex.reps,
+          notes: ex.notes,
           sort_order: j,
         }));
 
