@@ -20,6 +20,7 @@ import PersonalStudents from "./pages/PersonalStudents";
 import PersonalStudentDetail from "./pages/PersonalStudentDetail";
 import PersonalPending from "./pages/PersonalPending";
 import PersonalAssistant from "./pages/PersonalAssistant";
+import WorkoutAdapt from "./pages/WorkoutAdapt";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
