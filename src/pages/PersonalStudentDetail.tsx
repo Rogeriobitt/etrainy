@@ -208,7 +208,7 @@ const PersonalStudentDetail = () => {
         await notifyAlunoSerieEditada(studentId, pt?.full_name || "Personal");
       }
     } catch {
-      toast({ title: "Erro ao salvar", variant: "destructive" });
+      toast({ title: "Algo deu errado", description: "Não foi possível salvar as alterações. Tente novamente.", variant: "destructive" });
     } finally {
       setSaving(false);
     }
@@ -233,7 +233,7 @@ const PersonalStudentDetail = () => {
         await notifyAlunoSerieAprovada(studentId, pt?.full_name || "Personal");
       }
     } catch {
-      toast({ title: "Erro ao aprovar", variant: "destructive" });
+      toast({ title: "Algo deu errado", description: "Não foi possível aprovar a série. Tente novamente.", variant: "destructive" });
     } finally {
       setApproving(false);
     }
@@ -271,7 +271,7 @@ const PersonalStudentDetail = () => {
               )}
             </div>
             <div className="flex-1 grid grid-cols-2 gap-x-6 gap-y-1 text-sm">
-              <p className="col-span-2 font-heading text-xl tracking-wide mb-2">{student.full_name || "Aluno"}</p>
+              <p className="col-span-2 font-heading text-xl tracking-wide mb-2">Dados do aluno — {student.full_name || "Aluno"}</p>
               <span><span className="text-muted-foreground">Objetivo:</span> {OBJECTIVES[student.goal || ""] || student.goal || "—"}</span>
               <span><span className="text-muted-foreground">Nível:</span> {LEVELS[student.experience_level || ""] || "—"}</span>
               <span><span className="text-muted-foreground">Dias/semana:</span> {student.training_days || "—"}x</span>
@@ -317,7 +317,7 @@ const PersonalStudentDetail = () => {
 
                 <div className="bg-card border border-border rounded-xl overflow-hidden mb-6">
                   <div className="px-4 py-3 border-b border-border">
-                    <p className="font-heading text-lg tracking-wide">{days[activeTab].name}</p>
+                    <p className="font-heading text-lg tracking-wide">Ajustes do treino — {days[activeTab].name}</p>
                     <p className="text-xs text-muted-foreground">{days[activeTab].muscle_groups}</p>
                   </div>
 
