@@ -186,7 +186,7 @@ const StudentSignup = () => {
       if (profileError) throw profileError;
 
       toast({ title: "Conta criada com sucesso! 🎉" });
-      navigate("/");
+      navigate("/dashboard/aluno");
     } catch (err: any) {
       toast({ title: "Erro ao criar conta", description: err.message, variant: "destructive" });
     } finally {

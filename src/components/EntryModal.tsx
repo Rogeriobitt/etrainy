@@ -54,7 +54,7 @@ const EntryModal = ({ open, onClose }: EntryModalProps) => {
               </button>
 
               <button
-                onClick={() => handleChoice("/auth?role=personal")}
+                onClick={() => handleChoice("/cadastro/personal")}
                 className="w-full bg-secondary border border-border py-4 rounded-xl font-semibold text-secondary-foreground flex items-center justify-center gap-3 hover:bg-secondary/80 transition-colors text-lg"
               >
                 <UserCog className="w-5 h-5" />

@@ -1,0 +1,115 @@
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import Navbar from "@/components/Navbar";
+import { Dumbbell, Sparkles, Home, BarChart3, ArrowRight, Loader2 } from "lucide-react";
+import { useEffect } from "react";
+
+const cards = [
+  {
+    title: "Minha Série de Musculação",
+    text: "Veja seus treinos A, B, C… aprovados pelo seu personal e marque o que já foi concluído.",
+    button: "Ver Série",
+    path: "/treinos/minha-serie",
+    icon: Dumbbell,
+  },
+  {
+    title: "Criar ou Atualizar com IA",
+    text: "Responda a algumas perguntas e deixe a assistente sugerir uma nova série para o seu objetivo.",
+    button: "Usar Assistente",
+    path: "/assistente/treino",
+    icon: Sparkles,
+  },
+  {
+    title: "Treinar sem Academia",
+    text: "Vai viajar ou treinar em casa? Adapte sua série atual para peso do corpo ou pesos livres.",
+    button: "Adaptar Treino",
+    path: "/treinos/adaptar",
+    icon: Home,
+  },
+  {
+    title: "Histórico e Evolução",
+    text: "Veja quantos treinos concluiu e acompanhe sua evolução ao longo do tempo.",
+    button: "Ver Histórico",
+    path: "/treinos/historico",
+    icon: BarChart3,
+  },
+];
+
+const StudentDashboard = () => {
+  const { user, loading: authLoading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!authLoading && !user) navigate("/auth", { replace: true });
+  }, [authLoading, user, navigate]);
+
+  const { data: profile, isLoading } = useQuery({
+    queryKey: ["student-profile", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("user_id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const firstName = profile?.full_name?.split(" ")[0] || "Aluno";
+
+  if (authLoading || isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="container mx-auto px-6 pt-24 pb-12">
+        <h1 className="text-3xl md:text-4xl font-heading tracking-wider mb-1">
+          Olá, <span className="text-gradient">{firstName}</span>
+        </h1>
+        <p className="text-muted-foreground mb-10 max-w-xl">
+          Aqui você acompanha seus treinos e pode usar a assistente de IA para criar ou atualizar sua série.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {cards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <div
+                key={card.path}
+                className="bg-card border border-border rounded-xl p-6 flex flex-col justify-between hover:border-primary/40 transition-colors"
+              >
+                <div>
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <h2 className="text-lg font-heading tracking-wide">{card.title}</h2>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-5">{card.text}</p>
+                </div>
+                <button
+                  onClick={() => navigate(card.path)}
+                  className="gradient-accent px-5 py-2.5 rounded-lg font-semibold text-primary-foreground text-sm flex items-center gap-2 hover:opacity-90 transition-opacity self-start"
+                >
+                  {card.button} <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default StudentDashboard;
