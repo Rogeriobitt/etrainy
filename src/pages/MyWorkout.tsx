@@ -24,9 +24,11 @@ const OBJECTIVES: Record<string, string> = {
 const MyWorkout = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState(0);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [showDivision, setShowDivision] = useState(false);
+  const [evolving, setEvolving] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
