@@ -122,10 +122,32 @@ const MyWorkout = () => {
               <button onClick={() => setShowDivision(!showDivision)} className="px-4 py-2 rounded-lg text-sm border border-border bg-secondary hover:border-primary/40 transition-colors flex items-center gap-2">
                 <Info className="w-4 h-4" /> {showDivision ? "Fechar resumo" : "Ver resumo da divisão"}
               </button>
-              <button onClick={() => navigate("/assistente/treino")} className="px-4 py-2 rounded-lg text-sm border border-border bg-secondary hover:border-primary/40 transition-colors flex items-center gap-2">
-                <RefreshCw className="w-4 h-4" /> Pedir atualização da série
+              <button
+                onClick={async () => {
+                  if (!plan || !user) return;
+                  setEvolving(true);
+                  try {
+                    const result = await evolveWorkoutPlan(user.id, plan.id);
+                    if (result.success) {
+                      toast({ title: "Série evoluída!", description: result.message });
+                      queryClient.invalidateQueries({ queryKey: ["my-workout-plan"] });
+                      queryClient.invalidateQueries({ queryKey: ["my-workout-days"] });
+                      setActiveTab(0);
+                      setChecked({});
+                    } else {
+                      toast({ title: "Atenção", description: result.message, variant: "destructive" });
+                    }
+                  } catch {
+                    toast({ title: "Erro", description: "Não foi possível evoluir a série.", variant: "destructive" });
+                  } finally {
+                    setEvolving(false);
+                  }
+                }}
+                disabled={evolving}
+                className="px-4 py-2 rounded-lg text-sm border border-border bg-secondary hover:border-primary/40 transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {evolving ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} {evolving ? "Evoluindo..." : "Pedir atualização da série"}
               </button>
-            </div>
 
             {/* Division modal/summary */}
             {showDivision && days && (
