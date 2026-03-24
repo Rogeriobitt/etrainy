@@ -3,9 +3,46 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
-import { Dumbbell, Sparkles, Home, BarChart3, ArrowRight, Loader2 } from "lucide-react";
+import { Dumbbell, Sparkles, Home, BarChart3, ArrowRight, Loader2, ClipboardList } from "lucide-react";
 import NotificationBell from "@/components/NotificationBell";
 import { useEffect } from "react";
+import { useQuery as useRQQuery } from "@tanstack/react-query";
+
+const ActivePlanCheck = ({ navigate }: { navigate: (path: string) => void }) => {
+  const { user } = useAuth();
+  const { data: plan, isLoading } = useRQQuery({
+    queryKey: ["active-plan-check", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("workout_plans")
+        .select("id, status")
+        .eq("user_id", user!.id)
+        .in("status", ["ativa", "aguardando_revisao_personal"])
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  if (isLoading || plan) return null;
+
+  return (
+    <div className="bg-card border border-primary/20 rounded-xl p-6 mb-8 text-center">
+      <ClipboardList className="w-10 h-10 text-primary mx-auto mb-3" />
+      <h2 className="font-heading text-lg tracking-wide mb-1">Você ainda não tem uma série ativa</h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        Use a Assistente de IA para criar seu primeiro treino personalizado.
+      </p>
+      <button
+        onClick={() => navigate("/assistente/treino")}
+        className="gradient-accent px-6 py-2.5 rounded-lg font-semibold text-primary-foreground text-sm inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
+      >
+        <Sparkles className="w-4 h-4" /> Criar série com IA
+      </button>
+    </div>
+  );
+};
 
 const cards = [
   {
@@ -83,6 +120,9 @@ const StudentDashboard = () => {
         <p className="text-muted-foreground mb-10 max-w-xl">
           Aqui você acompanha seus treinos e pode usar a assistente de IA para criar ou atualizar sua série.
         </p>
+
+        {/* Empty state when no active plan */}
+        <ActivePlanCheck navigate={navigate} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cards.map((card) => {
