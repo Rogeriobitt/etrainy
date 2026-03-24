@@ -253,6 +253,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      nextval_personal_code: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "admin" | "user"
