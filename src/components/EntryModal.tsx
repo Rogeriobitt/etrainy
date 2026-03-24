@@ -46,7 +46,7 @@ const EntryModal = ({ open, onClose }: EntryModalProps) => {
 
             <div className="space-y-3">
               <button
-                onClick={() => handleChoice("/auth?role=aluno")}
+                onClick={() => handleChoice("/cadastro/aluno")}
                 className="w-full gradient-accent py-4 rounded-xl font-semibold text-primary-foreground flex items-center justify-center gap-3 hover:opacity-90 transition-opacity text-lg"
               >
                 <GraduationCap className="w-5 h-5" />
