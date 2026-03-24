@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Loader2, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
 import { selectExercisesForDay } from "@/lib/exerciseSelector";
+import { notifyPersonalSerieGerada } from "@/lib/notifications";
 
 const DIVISION_MAP: Record<number, { division: string; description: string; workouts: { name: string; muscles: string }[] }> = {
   2: {
@@ -181,6 +182,22 @@ const WorkoutAssistant = () => {
           .insert(exerciseRows);
 
         if (exError) throw exError;
+      }
+
+      // Notify personal if linked
+      if (profile?.personal_trainer_id) {
+        const { data: pt } = await supabase
+          .from("personal_trainers")
+          .select("user_id")
+          .eq("id", profile.personal_trainer_id)
+          .maybeSingle();
+        if (pt?.user_id) {
+          await notifyPersonalSerieGerada(
+            pt.user_id,
+            profile.full_name || "Aluno",
+            user.id
+          );
+        }
       }
 
       navigate("/treinos/minha-serie");
