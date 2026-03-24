@@ -41,6 +41,45 @@ export type Database = {
         }
         Relationships: []
       }
+      personal_trainers: {
+        Row: {
+          created_at: string
+          cref: string | null
+          experience: string | null
+          full_name: string
+          gym_name: string | null
+          id: string
+          personal_code: string
+          phone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          cref?: string | null
+          experience?: string | null
+          full_name: string
+          gym_name?: string | null
+          id?: string
+          personal_code: string
+          phone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          cref?: string | null
+          experience?: string | null
+          full_name?: string
+          gym_name?: string | null
+          id?: string
+          personal_code?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -55,6 +94,7 @@ export type Database = {
           id: string
           injury_description: string | null
           personal_code: string | null
+          personal_trainer_id: string | null
           sex: string | null
           training_days: string | null
           training_location: string | null
@@ -75,6 +115,7 @@ export type Database = {
           id?: string
           injury_description?: string | null
           personal_code?: string | null
+          personal_trainer_id?: string | null
           sex?: string | null
           training_days?: string | null
           training_location?: string | null
@@ -95,6 +136,7 @@ export type Database = {
           id?: string
           injury_description?: string | null
           personal_code?: string | null
+          personal_trainer_id?: string | null
           sex?: string | null
           training_days?: string | null
           training_location?: string | null
@@ -102,7 +144,15 @@ export type Database = {
           user_id?: string
           weight?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_personal_trainer_id_fkey"
+            columns: ["personal_trainer_id"]
+            isOneToOne: false
+            referencedRelation: "personal_trainers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       progress_entries: {
         Row: {
