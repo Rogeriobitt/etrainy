@@ -14,6 +14,8 @@ import Profile from "./pages/Profile";
 import TreinosPreview from "./pages/TreinosPreview";
 import StudentDashboard from "./pages/StudentDashboard";
 import PersonalDashboard from "./pages/PersonalDashboard";
+import WorkoutAssistant from "./pages/WorkoutAssistant";
+import MyWorkout from "./pages/MyWorkout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,8 +38,8 @@ const App = () => (
             <Route path="/treinos-preview" element={<TreinosPreview />} />
             <Route path="/dashboard/aluno" element={<StudentDashboard />} />
             <Route path="/dashboard/personal" element={<PersonalDashboard />} />
-            <Route path="/treinos/minha-serie" element={<NotFound />} />
-            <Route path="/assistente/treino" element={<NotFound />} />
+            <Route path="/treinos/minha-serie" element={<MyWorkout />} />
+            <Route path="/assistente/treino" element={<WorkoutAssistant />} />
             <Route path="/treinos/adaptar" element={<NotFound />} />
             <Route path="/treinos/historico" element={<NotFound />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
