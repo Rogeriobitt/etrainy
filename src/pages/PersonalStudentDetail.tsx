@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { ArrowLeft, Loader2, Save, CheckCircle2, Plus, Trash2, Sparkles, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { notifyAlunoSerieAprovada, notifyAlunoSerieEditada } from "@/lib/notifications";
 
 const OBJECTIVES: Record<string, string> = {
   hypertrophy: "Hipertrofia",
@@ -196,6 +197,16 @@ const PersonalStudentDetail = () => {
       toast({ title: "Alterações salvas com sucesso!" });
       queryClient.invalidateQueries({ queryKey: ["student-days"] });
       setEditedExercises({});
+
+      // Notify student
+      if (studentId) {
+        const { data: pt } = await supabase
+          .from("personal_trainers")
+          .select("full_name")
+          .eq("user_id", user!.id)
+          .maybeSingle();
+        await notifyAlunoSerieEditada(studentId, pt?.full_name || "Personal");
+      }
     } catch {
       toast({ title: "Erro ao salvar", variant: "destructive" });
     } finally {
@@ -211,6 +222,16 @@ const PersonalStudentDetail = () => {
       await supabase.from("workout_plans").update({ status: "ativa" }).eq("id", plan.id);
       toast({ title: "Série aprovada e enviada para o aluno!" });
       queryClient.invalidateQueries({ queryKey: ["student-plan"] });
+
+      // Notify student
+      if (studentId) {
+        const { data: pt } = await supabase
+          .from("personal_trainers")
+          .select("full_name")
+          .eq("user_id", user!.id)
+          .maybeSingle();
+        await notifyAlunoSerieAprovada(studentId, pt?.full_name || "Personal");
+      }
     } catch {
       toast({ title: "Erro ao aprovar", variant: "destructive" });
     } finally {
