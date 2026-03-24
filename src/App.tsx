@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import AdminClasses from "./pages/AdminClasses";
 import ClassPlayer from "./pages/ClassPlayer";
 import Profile from "./pages/Profile";
+import TreinosPreview from "./pages/TreinosPreview";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/admin/classes" element={<AdminClasses />} />
             <Route path="/class/:id" element={<ClassPlayer />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/treinos-preview" element={<TreinosPreview />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
