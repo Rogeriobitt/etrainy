@@ -148,6 +148,7 @@ const MyWorkout = () => {
               >
                 {evolving ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} {evolving ? "Evoluindo..." : "Pedir atualização da série"}
               </button>
+            </div>
 
             {/* Division modal/summary */}
             {showDivision && days && (
