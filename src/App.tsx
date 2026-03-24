@@ -16,6 +16,10 @@ import StudentDashboard from "./pages/StudentDashboard";
 import PersonalDashboard from "./pages/PersonalDashboard";
 import WorkoutAssistant from "./pages/WorkoutAssistant";
 import MyWorkout from "./pages/MyWorkout";
+import PersonalStudents from "./pages/PersonalStudents";
+import PersonalStudentDetail from "./pages/PersonalStudentDetail";
+import PersonalPending from "./pages/PersonalPending";
+import PersonalAssistant from "./pages/PersonalAssistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
