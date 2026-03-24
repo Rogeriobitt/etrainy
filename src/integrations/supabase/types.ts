@@ -41,6 +41,30 @@ export type Database = {
         }
         Relationships: []
       }
+      exercise_equivalents: {
+        Row: {
+          bodyweight_equivalent: string
+          freeweight_equivalent: string
+          id: string
+          limited_space_equivalent: string | null
+          original_exercise: string
+        }
+        Insert: {
+          bodyweight_equivalent: string
+          freeweight_equivalent: string
+          id?: string
+          limited_space_equivalent?: string | null
+          original_exercise: string
+        }
+        Update: {
+          bodyweight_equivalent?: string
+          freeweight_equivalent?: string
+          id?: string
+          limited_space_equivalent?: string | null
+          original_exercise?: string
+        }
+        Relationships: []
+      }
       personal_trainers: {
         Row: {
           created_at: string
