@@ -241,6 +241,126 @@ export type Database = {
         }
         Relationships: []
       }
+      workout_days: {
+        Row: {
+          id: string
+          muscle_groups: string
+          name: string
+          sort_order: number
+          workout_plan_id: string
+        }
+        Insert: {
+          id?: string
+          muscle_groups: string
+          name: string
+          sort_order?: number
+          workout_plan_id: string
+        }
+        Update: {
+          id?: string
+          muscle_groups?: string
+          name?: string
+          sort_order?: number
+          workout_plan_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_days_workout_plan_id_fkey"
+            columns: ["workout_plan_id"]
+            isOneToOne: false
+            referencedRelation: "workout_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_exercises: {
+        Row: {
+          exercise_name: string
+          id: string
+          notes: string | null
+          reps: string
+          sets: string
+          sort_order: number
+          workout_day_id: string
+        }
+        Insert: {
+          exercise_name: string
+          id?: string
+          notes?: string | null
+          reps: string
+          sets: string
+          sort_order?: number
+          workout_day_id: string
+        }
+        Update: {
+          exercise_name?: string
+          id?: string
+          notes?: string | null
+          reps?: string
+          sets?: string
+          sort_order?: number
+          workout_day_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_exercises_workout_day_id_fkey"
+            columns: ["workout_day_id"]
+            isOneToOne: false
+            referencedRelation: "workout_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_plans: {
+        Row: {
+          created_at: string
+          days_per_week: number
+          division: string
+          id: string
+          level: string
+          objective: string
+          personal_trainer_id: string | null
+          status: string
+          training_location: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          days_per_week: number
+          division: string
+          id?: string
+          level: string
+          objective: string
+          personal_trainer_id?: string | null
+          status?: string
+          training_location?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          days_per_week?: number
+          division?: string
+          id?: string
+          level?: string
+          objective?: string
+          personal_trainer_id?: string | null
+          status?: string
+          training_location?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_plans_personal_trainer_id_fkey"
+            columns: ["personal_trainer_id"]
+            isOneToOne: false
+            referencedRelation: "personal_trainers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
