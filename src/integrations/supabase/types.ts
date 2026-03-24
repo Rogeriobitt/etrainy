@@ -65,6 +65,39 @@ export type Database = {
         }
         Relationships: []
       }
+      exercises: {
+        Row: {
+          created_at: string
+          equipment_type: string
+          id: string
+          muscle_group: string
+          name: string
+          notes: string | null
+          short_description: string | null
+          suggested_level: string
+        }
+        Insert: {
+          created_at?: string
+          equipment_type: string
+          id?: string
+          muscle_group: string
+          name: string
+          notes?: string | null
+          short_description?: string | null
+          suggested_level?: string
+        }
+        Update: {
+          created_at?: string
+          equipment_type?: string
+          id?: string
+          muscle_group?: string
+          name?: string
+          notes?: string | null
+          short_description?: string | null
+          suggested_level?: string
+        }
+        Relationships: []
+      }
       personal_trainers: {
         Row: {
           created_at: string
