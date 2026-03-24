@@ -1,10 +1,12 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Sparkles, Loader2, CheckCircle2, Info, RefreshCw } from "lucide-react";
+import { ArrowLeft, Sparkles, Loader2, CheckCircle2, Info, RefreshCw, AlertTriangle } from "lucide-react";
+import { evolveWorkoutPlan } from "@/lib/workoutEvolution";
+import { toast } from "@/hooks/use-toast";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   ativa: { label: "Ativa", color: "text-green-400" },
@@ -22,9 +24,11 @@ const OBJECTIVES: Record<string, string> = {
 const MyWorkout = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState(0);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [showDivision, setShowDivision] = useState(false);
+  const [evolving, setEvolving] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
@@ -118,8 +122,31 @@ const MyWorkout = () => {
               <button onClick={() => setShowDivision(!showDivision)} className="px-4 py-2 rounded-lg text-sm border border-border bg-secondary hover:border-primary/40 transition-colors flex items-center gap-2">
                 <Info className="w-4 h-4" /> {showDivision ? "Fechar resumo" : "Ver resumo da divisão"}
               </button>
-              <button onClick={() => navigate("/assistente/treino")} className="px-4 py-2 rounded-lg text-sm border border-border bg-secondary hover:border-primary/40 transition-colors flex items-center gap-2">
-                <RefreshCw className="w-4 h-4" /> Pedir atualização da série
+              <button
+                onClick={async () => {
+                  if (!plan || !user) return;
+                  setEvolving(true);
+                  try {
+                    const result = await evolveWorkoutPlan(user.id, plan.id);
+                    if (result.success) {
+                      toast({ title: "Série evoluída!", description: result.message });
+                      queryClient.invalidateQueries({ queryKey: ["my-workout-plan"] });
+                      queryClient.invalidateQueries({ queryKey: ["my-workout-days"] });
+                      setActiveTab(0);
+                      setChecked({});
+                    } else {
+                      toast({ title: "Atenção", description: result.message, variant: "destructive" });
+                    }
+                  } catch {
+                    toast({ title: "Erro", description: "Não foi possível evoluir a série.", variant: "destructive" });
+                  } finally {
+                    setEvolving(false);
+                  }
+                }}
+                disabled={evolving}
+                className="px-4 py-2 rounded-lg text-sm border border-border bg-secondary hover:border-primary/40 transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {evolving ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />} {evolving ? "Evoluindo..." : "Pedir atualização da série"}
               </button>
             </div>
 
