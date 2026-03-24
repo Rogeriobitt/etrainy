@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
 import { Users, Sparkles, ClipboardCheck, Loader2, Copy, Check } from "lucide-react";
+import NotificationBell from "@/components/NotificationBell";
 import { useEffect, useState } from "react";
 
 const PersonalDashboard = () => {
@@ -78,9 +79,12 @@ const PersonalDashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="container mx-auto px-6 pt-24 pb-12">
-        <h1 className="text-3xl md:text-4xl font-heading tracking-wider mb-1">
-          Olá, <span className="text-gradient">{firstName}</span>
-        </h1>
+        <div className="flex items-center justify-between mb-1">
+          <h1 className="text-3xl md:text-4xl font-heading tracking-wider">
+            Olá, <span className="text-gradient">{firstName}</span>
+          </h1>
+          <NotificationBell />
+        </div>
         <p className="text-muted-foreground mb-4">
           Gerencie seus alunos, crie séries com a assistente de IA e revise os treinos pendentes.
         </p>
