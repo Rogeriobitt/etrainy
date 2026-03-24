@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { notifyPersonalSerieEvoluida } from "@/lib/notifications";
 
 // Compound exercises that should NOT be swapped
 const PILLAR_EXERCISES = [
@@ -251,6 +252,27 @@ export async function evolveWorkoutPlan(
           notes: ex.notes,
           sort_order: ex.sort_order,
         });
+    }
+  }
+
+  // Notify personal if linked
+  if (hasPersonal && profile?.personal_trainer_id) {
+    const { data: pt } = await supabase
+      .from("personal_trainers")
+      .select("user_id")
+      .eq("id", profile.personal_trainer_id)
+      .maybeSingle();
+    const { data: alunoProfile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (pt?.user_id) {
+      await notifyPersonalSerieEvoluida(
+        pt.user_id,
+        alunoProfile?.full_name || "Aluno",
+        userId
+      );
     }
   }
 
