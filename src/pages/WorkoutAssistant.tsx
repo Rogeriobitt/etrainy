@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Loader2, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
 import { selectExercisesForDay } from "@/lib/exerciseSelector";
 import { notifyPersonalSerieGerada } from "@/lib/notifications";
+import { toast } from "@/hooks/use-toast";
 
 const DIVISION_MAP: Record<number, { division: string; description: string; workouts: { name: string; muscles: string }[] }> = {
   2: {
@@ -200,9 +201,11 @@ const WorkoutAssistant = () => {
         }
       }
 
+      toast({ title: "Série criada com sucesso!", description: profile?.personal_trainer_id ? "Seu personal será notificado para revisar." : "Sua nova série já está ativa." });
       navigate("/treinos/minha-serie");
     } catch (err) {
       console.error("Error generating workout:", err);
+      toast({ title: "Algo deu errado", description: "Não foi possível criar a série. Tente novamente em alguns instantes.", variant: "destructive" });
     } finally {
       setGenerating(false);
     }

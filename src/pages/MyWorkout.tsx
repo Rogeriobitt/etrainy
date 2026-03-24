@@ -101,10 +101,12 @@ const MyWorkout = () => {
         <h1 className="text-3xl font-heading tracking-wider mb-2">Minha Série de Musculação</h1>
 
         {!plan ? (
-          <div className="bg-card border border-border rounded-xl p-8 text-center mt-8">
-            <p className="text-muted-foreground mb-6">Você ainda não tem uma série criada. Use a Assistente de IA para gerar sua primeira série.</p>
+          <div className="bg-card border border-primary/20 rounded-xl p-8 text-center mt-8">
+            <Sparkles className="w-10 h-10 text-primary mx-auto mb-3" />
+            <h2 className="font-heading text-lg tracking-wide mb-1">Você ainda não tem uma série ativa</h2>
+            <p className="text-sm text-muted-foreground mb-6">Use a Assistente de IA para criar seu primeiro treino personalizado.</p>
             <button onClick={() => navigate("/assistente/treino")} className="gradient-accent px-6 py-2.5 rounded-lg font-semibold text-primary-foreground text-sm inline-flex items-center gap-2 hover:opacity-90 transition-opacity">
-              <Sparkles className="w-4 h-4" /> Usar Assistente de IA
+              <Sparkles className="w-4 h-4" /> Criar série com IA
             </button>
           </div>
         ) : (
@@ -137,8 +139,8 @@ const MyWorkout = () => {
                     } else {
                       toast({ title: "Atenção", description: result.message, variant: "destructive" });
                     }
-                  } catch {
-                    toast({ title: "Erro", description: "Não foi possível evoluir a série.", variant: "destructive" });
+                    } catch (err) {
+                    toast({ title: "Algo deu errado", description: "Não foi possível evoluir a série. Tente novamente em alguns instantes.", variant: "destructive" });
                   } finally {
                     setEvolving(false);
                   }

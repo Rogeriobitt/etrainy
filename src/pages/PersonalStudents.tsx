@@ -100,8 +100,10 @@ const PersonalStudents = () => {
         {!students || students.length === 0 ? (
           <div className="bg-card border border-border rounded-xl p-8 text-center">
             <User className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">Nenhum aluno vinculado ao seu código ainda.</p>
-            <p className="text-sm text-muted-foreground mt-2">Compartilhe seu código com seus alunos para que eles se vinculem a você.</p>
+            <p className="font-heading text-lg tracking-wide mb-1">Nenhum aluno vinculado</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Compartilhe seu código de personal com seus alunos para que eles se vinculem a você no momento do cadastro.
+            </p>
           </div>
         ) : (
           <div className="space-y-4">

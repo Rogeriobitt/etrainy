@@ -115,7 +115,9 @@ const PersonalDashboard = () => {
             </div>
             <h2 className="text-lg font-heading tracking-wide mb-2">Meus Alunos</h2>
             <p className="text-sm text-muted-foreground mb-4 flex-1">
-              Veja todos os alunos vinculados ao seu código e acesse o perfil de cada um.
+              {typeof studentCount === "number" && studentCount === 0
+                ? `Nenhum aluno vinculado ainda. Peça para seus alunos usarem seu código ${personal?.personal_code || ""} no cadastro.`
+                : "Veja todos os alunos vinculados ao seu código e acesse o perfil de cada um."}
             </p>
             <button
               onClick={() => navigate("/personal/alunos")}
@@ -132,7 +134,7 @@ const PersonalDashboard = () => {
             </div>
             <h2 className="text-lg font-heading tracking-wide mb-2">Criar Série com IA</h2>
             <p className="text-sm text-muted-foreground mb-4 flex-1">
-              Escolha um aluno e deixe a assistente sugerir uma série completa para você revisar e aprovar.
+              Escolha um aluno e a assistente monta a base da série para você revisar e aprovar.
             </p>
             <button
               onClick={() => navigate("/assistente/treino/personal")}
@@ -156,7 +158,9 @@ const PersonalDashboard = () => {
             </div>
             <h2 className="text-lg font-heading tracking-wide mb-2">Séries Pendentes</h2>
             <p className="text-sm text-muted-foreground mb-4 flex-1">
-              Revise e aprove as séries criadas pela assistente de IA ou solicitadas pelos seus alunos.
+              {typeof pendingCount === "number" && pendingCount === 0
+                ? "Sem séries pendentes de revisão no momento. Tudo em dia!"
+                : "Séries criadas pela IA ou solicitadas pelos alunos aguardando sua revisão e aprovação."}
             </p>
             <button
               onClick={() => navigate("/personal/pendencias")}
