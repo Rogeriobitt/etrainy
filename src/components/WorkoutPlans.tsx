@@ -27,7 +27,7 @@ const workouts = [
 
 const WorkoutPlans = () => {
   return (
-    <section className="py-20 bg-card">
+    <section className="py-16 md:py-20 bg-card">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -35,11 +35,11 @@ const WorkoutPlans = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-5xl md:text-6xl font-heading mb-2 tracking-wider">
+          <h2 className="text-3xl md:text-5xl font-heading mb-2 tracking-wider">
             TREINOS <span className="text-gradient">EM CASA</span>
           </h2>
-          <p className="text-muted-foreground mb-12 text-lg">
-            Planos estruturados que não precisam de equipamento.
+          <p className="text-muted-foreground mb-10 text-base">
+            Treinos sem equipamento, prontos para usar.
           </p>
         </motion.div>
 
