@@ -1,12 +1,18 @@
 import { motion } from "framer-motion";
 import { Play, Dumbbell } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import heroImg from "@/assets/hero-fitness.jpg";
 
 const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-screen flex items-end pb-20 overflow-hidden bg-background">
+    <section className="relative min-h-screen flex items-end pb-20 overflow-hidden">
+      <img
+        src={heroImg}
+        alt="Treino intenso na academia"
+        className="absolute inset-0 w-full h-full object-cover"
+      />
       <div className="absolute inset-0 gradient-hero" />
 
       <div className="relative z-10 container mx-auto px-6">
