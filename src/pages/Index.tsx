@@ -15,7 +15,7 @@ const Index = () => {
         <WorkoutPlans />
       </div>
       <footer className="py-10 border-t border-border text-center text-muted-foreground text-sm">
-        <p>© 2026 FitFlow. Todos os direitos reservados.</p>
+        <p>© 2026 TrainyLab. Todos os direitos reservados.</p>
       </footer>
     </div>
   );
