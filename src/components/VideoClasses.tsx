@@ -34,7 +34,7 @@ const VideoClasses = () => {
   const isFromDb = dbClasses && dbClasses.length > 0;
 
   return (
-    <section className="py-20 bg-background">
+    <section className="py-16 md:py-20 bg-background">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -42,11 +42,11 @@ const VideoClasses = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          <h2 className="text-5xl md:text-6xl font-heading mb-2 tracking-wider">
+          <h2 className="text-3xl md:text-5xl font-heading mb-2 tracking-wider">
             AULAS EM <span className="text-gradient">VÍDEO</span>
           </h2>
-          <p className="text-muted-foreground mb-12 text-lg">
-            Escolha entre dezenas de aulas guiadas por instrutores profissionais.
+          <p className="text-muted-foreground mb-10 text-base">
+            Aulas guiadas prontas para seus alunos.
           </p>
         </motion.div>
 
@@ -64,7 +64,7 @@ const VideoClasses = () => {
                 className="group cursor-pointer"
                 onClick={() => isFromDb ? navigate(`/class/${cls.id}`) : null}
               >
-                <div className="relative rounded-xl overflow-hidden aspect-square mb-4">
+                <div className="relative rounded-xl overflow-hidden aspect-video mb-3">
                   <img
                     src={cls.thumbnail_url || "/placeholder.svg"}
                     alt={cls.title}
