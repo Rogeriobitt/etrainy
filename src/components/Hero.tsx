@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import logo from "@/assets/trainylab-logo.png";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -14,7 +15,8 @@ const Hero = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col items-center text-center max-w-2xl mx-auto"
         >
-          <h1 className="text-4xl md:text-6xl font-heading leading-none mb-4 tracking-wider">
+          <img src={logo} alt="TrainyLab" className="h-10 md:h-14 w-auto mb-8" />
+          <h1 className="text-xl md:text-3xl font-heading leading-none mb-4 tracking-wider">
             A CENTRAL DE TREINOS PARA O <span className="text-gradient">PERSONAL</span>.
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground mb-10 font-body">
