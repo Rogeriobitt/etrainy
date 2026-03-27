@@ -6,7 +6,7 @@ const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="min-h-[80vh] md:min-h-screen flex items-center justify-center bg-background">
+    <section className="flex-1 flex items-center justify-center bg-background">
       <div className="container mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 40 }}
