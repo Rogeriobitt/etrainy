@@ -133,6 +133,7 @@ export type Database = {
       }
       personal_trainers: {
         Row: {
+          city: string | null
           created_at: string
           cref: string | null
           experience: string | null
@@ -141,10 +142,12 @@ export type Database = {
           id: string
           personal_code: string
           phone: string | null
+          state: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          city?: string | null
           created_at?: string
           cref?: string | null
           experience?: string | null
@@ -153,10 +156,12 @@ export type Database = {
           id?: string
           personal_code: string
           phone?: string | null
+          state?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          city?: string | null
           created_at?: string
           cref?: string | null
           experience?: string | null
@@ -165,6 +170,7 @@ export type Database = {
           id?: string
           personal_code?: string
           phone?: string | null
+          state?: string | null
           updated_at?: string
           user_id?: string
         }

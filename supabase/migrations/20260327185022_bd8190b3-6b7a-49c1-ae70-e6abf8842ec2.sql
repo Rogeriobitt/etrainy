@@ -1,0 +1,1 @@
+ALTER TABLE public.personal_trainers ADD COLUMN IF NOT EXISTS city text, ADD COLUMN IF NOT EXISTS state text;
