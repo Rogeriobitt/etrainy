@@ -15,11 +15,11 @@ const Hero = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col items-center text-center max-w-2xl mx-auto"
         >
-          <img src={logo} alt="TrainyLab" className="h-10 md:h-14 w-auto mb-8" />
+          <img src={logo} alt="TrainyLab" className="h-20 md:h-28 w-auto mb-8" />
           <h1 className="text-xl md:text-3xl font-heading leading-none mb-4 tracking-wider">
             A CENTRAL DE TREINOS PARA O <span className="text-gradient">PERSONAL</span>.
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-10 font-body">
+          <p className="text-sm md:text-base text-muted-foreground mb-10 font-body">
             Seus alunos, seus treinos, seu app.
           </p>
           <button
