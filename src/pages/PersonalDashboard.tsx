@@ -102,6 +102,23 @@ const PersonalDashboard = () => {
           </button>
         )}
 
+        <button
+          onClick={() => setAddStudentOpen(true)}
+          className="inline-flex items-center gap-2 gradient-accent px-5 py-2.5 rounded-lg font-semibold text-primary-foreground text-sm hover:opacity-90 transition-opacity mb-8"
+        >
+          <UserPlus className="w-4 h-4" />
+          Adicionar aluno
+        </button>
+
+        {personal && (
+          <AddStudentModal
+            open={addStudentOpen}
+            onOpenChange={setAddStudentOpen}
+            personalTrainerId={personal.id}
+            personalName={personal.full_name}
+          />
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Card 1 - Meus Alunos */}
           <div className="bg-card border border-border rounded-xl p-6 flex flex-col">
