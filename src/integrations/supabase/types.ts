@@ -277,6 +277,47 @@ export type Database = {
         }
         Relationships: []
       }
+      student_invitations: {
+        Row: {
+          created_at: string
+          id: string
+          personal_trainer_id: string
+          status: string
+          student_email: string
+          student_name: string
+          token: string
+          used_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          personal_trainer_id: string
+          status?: string
+          student_email: string
+          student_name: string
+          token?: string
+          used_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          personal_trainer_id?: string
+          status?: string
+          student_email?: string
+          student_name?: string
+          token?: string
+          used_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_invitations_personal_trainer_id_fkey"
+            columns: ["personal_trainer_id"]
+            isOneToOne: false
+            referencedRelation: "personal_trainers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
