@@ -12,6 +12,7 @@ const PersonalDashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const [addStudentOpen, setAddStudentOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth", { replace: true });
