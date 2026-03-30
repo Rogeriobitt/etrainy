@@ -21,6 +21,7 @@ import PersonalStudentDetail from "./pages/PersonalStudentDetail";
 import PersonalPending from "./pages/PersonalPending";
 import PersonalAssistant from "./pages/PersonalAssistant";
 import WorkoutAdapt from "./pages/WorkoutAdapt";
+import StudentInviteSignup from "./pages/StudentInviteSignup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
