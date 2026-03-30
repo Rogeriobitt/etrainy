@@ -3,14 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
-import { Users, Sparkles, ClipboardCheck, Loader2, Copy, Check } from "lucide-react";
+import { Users, Sparkles, ClipboardCheck, Loader2, Copy, Check, UserPlus } from "lucide-react";
 import NotificationBell from "@/components/NotificationBell";
+import AddStudentModal from "@/components/AddStudentModal";
 import { useEffect, useState } from "react";
 
 const PersonalDashboard = () => {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const [addStudentOpen, setAddStudentOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) navigate("/auth", { replace: true });
@@ -98,6 +100,23 @@ const PersonalDashboard = () => {
             <span className="font-semibold text-primary">{personal.personal_code}</span>
             {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-muted-foreground" />}
           </button>
+        )}
+
+        <button
+          onClick={() => setAddStudentOpen(true)}
+          className="inline-flex items-center gap-2 gradient-accent px-5 py-2.5 rounded-lg font-semibold text-primary-foreground text-sm hover:opacity-90 transition-opacity mb-8"
+        >
+          <UserPlus className="w-4 h-4" />
+          Adicionar aluno
+        </button>
+
+        {personal && (
+          <AddStudentModal
+            open={addStudentOpen}
+            onOpenChange={setAddStudentOpen}
+            personalTrainerId={personal.id}
+            personalName={personal.full_name}
+          />
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

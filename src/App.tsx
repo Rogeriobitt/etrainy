@@ -21,6 +21,7 @@ import PersonalStudentDetail from "./pages/PersonalStudentDetail";
 import PersonalPending from "./pages/PersonalPending";
 import PersonalAssistant from "./pages/PersonalAssistant";
 import WorkoutAdapt from "./pages/WorkoutAdapt";
+import StudentInviteSignup from "./pages/StudentInviteSignup";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
             <Route path="/personal/alunos/:studentId" element={<PersonalStudentDetail />} />
             <Route path="/personal/pendencias" element={<PersonalPending />} />
             <Route path="/treinos/adaptar" element={<WorkoutAdapt />} />
+            <Route path="/convite/:token" element={<StudentInviteSignup />} />
             <Route path="/treinos/historico" element={<NotFound />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
