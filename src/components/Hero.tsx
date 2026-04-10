@@ -30,7 +30,7 @@ const Hero = () => {
             <ArrowRight className="w-5 h-5" />
           </button>
           <button
-            onClick={() => navigate("/entrar")}
+            onClick={() => navigate("/auth")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
             Entrar no meu app TrainyLab
