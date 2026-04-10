@@ -177,14 +177,14 @@ const PersonalStudentDetail = () => {
               reps: ex.reps,
               notes: ex.notes || null,
               sort_order: ex.sort_order,
-            });
+            } as any);
           } else if (!ex.isNew && !ex.deleted) {
             await supabase.from("workout_exercises").update({
               exercise_name: ex.exercise_name,
               sets: ex.sets,
               reps: ex.reps,
               notes: ex.notes || null,
-            }).eq("id", ex.id);
+            } as any).eq("id", ex.id);
           }
         }
       }
