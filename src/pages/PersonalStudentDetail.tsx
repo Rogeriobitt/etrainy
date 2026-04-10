@@ -26,16 +26,7 @@ const LOCATIONS: Record<string, string> = {
   home_bodyweight: "Em casa sem equipamentos",
 };
 
-interface EditableExercise {
-  id: string;
-  exercise_name: string;
-  sets: string;
-  reps: string;
-  notes: string;
-  sort_order: number;
-  isNew?: boolean;
-  deleted?: boolean;
-}
+// EditableExercise type imported from ExerciseEditor
 
 const PersonalStudentDetail = () => {
   const { user, loading: authLoading } = useAuth();
