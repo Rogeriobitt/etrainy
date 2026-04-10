@@ -414,6 +414,7 @@ export type Database = {
         Row: {
           exercise_name: string
           id: string
+          image_url: string | null
           notes: string | null
           reps: string
           sets: string
@@ -423,6 +424,7 @@ export type Database = {
         Insert: {
           exercise_name: string
           id?: string
+          image_url?: string | null
           notes?: string | null
           reps: string
           sets: string
@@ -432,6 +434,7 @@ export type Database = {
         Update: {
           exercise_name?: string
           id?: string
+          image_url?: string | null
           notes?: string | null
           reps?: string
           sets?: string
