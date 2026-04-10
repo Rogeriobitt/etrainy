@@ -18,7 +18,21 @@ const Auth = () => {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) navigate("/", { replace: true });
+    if (!user) return;
+    // Redirect based on role: check if personal trainer
+    const redirect = async () => {
+      const { data } = await supabase
+        .from("personal_trainers")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (data) {
+        navigate("/dashboard/personal", { replace: true });
+      } else {
+        navigate("/dashboard/aluno", { replace: true });
+      }
+    };
+    redirect();
   }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {

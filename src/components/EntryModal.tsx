@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, GraduationCap, UserCog, Shield } from "lucide-react";
+import { X, GraduationCap, UserCog, Shield, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 interface EntryModalProps {
@@ -46,8 +46,16 @@ const EntryModal = ({ open, onClose }: EntryModalProps) => {
 
             <div className="space-y-3">
               <button
-                onClick={() => handleChoice("/cadastro/aluno")}
+                onClick={() => handleChoice("/auth")}
                 className="w-full gradient-accent py-4 rounded-xl font-semibold text-primary-foreground flex items-center justify-center gap-3 hover:opacity-90 transition-opacity text-lg"
+              >
+                <ArrowRight className="w-5 h-5" />
+                Já tenho conta
+              </button>
+
+              <button
+                onClick={() => handleChoice("/cadastro/aluno")}
+                className="w-full bg-secondary border border-border py-4 rounded-xl font-semibold text-secondary-foreground flex items-center justify-center gap-3 hover:bg-secondary/80 transition-colors text-lg"
               >
                 <GraduationCap className="w-5 h-5" />
                 Sou Aluno
@@ -62,6 +70,15 @@ const EntryModal = ({ open, onClose }: EntryModalProps) => {
               </button>
             </div>
 
+            <div className="mt-5 text-center">
+              <button
+                onClick={() => handleChoice("/auth?role=admin")}
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-1 mx-auto"
+              >
+                <Shield className="w-3.5 h-3.5" />
+                Acesso Administrativo
+              </button>
+            </div>
             <div className="mt-5 text-center">
               <button
                 onClick={() => handleChoice("/auth?role=admin")}
