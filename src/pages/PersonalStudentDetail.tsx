@@ -3,10 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
-import { ArrowLeft, Loader2, Save, CheckCircle2, Plus, Trash2, Sparkles, User } from "lucide-react";
+import { ArrowLeft, Loader2, Save, CheckCircle2, Plus, Sparkles, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { notifyAlunoSerieAprovada, notifyAlunoSerieEditada } from "@/lib/notifications";
+import { ExerciseEditor, type EditableExercise } from "@/components/ExerciseEditor";
 
 const OBJECTIVES: Record<string, string> = {
   hypertrophy: "Hipertrofia",
