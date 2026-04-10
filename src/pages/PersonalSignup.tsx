@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Loader2, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/trainylab-logo.png";
@@ -8,8 +9,8 @@ import logo from "@/assets/trainylab-logo.png";
 const PersonalSignup = () => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Step 1
   const [fullName, setFullName] = useState("");
@@ -81,35 +82,21 @@ const PersonalSignup = () => {
         .update({ full_name: fullName })
         .eq("user_id", userId);
 
-      setDone(true);
+      toast({ 
+        title: "Cadastro concluído!", 
+        description: "Você está sendo redirecionado para seu dashboard..." 
+      });
+      
+      // Redireciona para o dashboard do personal
+      setTimeout(() => {
+        navigate("/dashboard/personal");
+      }, 1500);
     } catch (err: any) {
       toast({ title: "Erro ao criar conta", description: err.message, variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
-
-  if (done) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-sm text-center flex flex-col items-center"
-        >
-          <img src={logo} alt="TrainyLab" className="h-14 md:h-20 w-auto mb-8" />
-          <CheckCircle2 className="w-14 h-14 text-primary mb-4" />
-          <h1 className="text-lg md:text-2xl font-heading tracking-wider mb-3">
-            CADASTRO <span className="text-gradient">CRIADO!</span>
-          </h1>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Enviamos um link de confirmação para o seu e-mail. Confirme para acessar seu app TrainyLab.
-          </p>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-6 py-12">
