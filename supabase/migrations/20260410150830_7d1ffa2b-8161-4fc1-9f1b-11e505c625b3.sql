@@ -1,0 +1,1 @@
+ALTER TABLE public.workout_exercises ADD COLUMN image_url text DEFAULT NULL;
