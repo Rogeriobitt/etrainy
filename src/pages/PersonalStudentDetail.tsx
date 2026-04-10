@@ -110,6 +110,7 @@ const PersonalStudentDetail = () => {
           sets: e.sets,
           reps: e.reps,
           notes: e.notes || "",
+          image_url: (e as any).image_url || "",
           sort_order: e.sort_order,
         }));
       });
@@ -150,6 +151,7 @@ const PersonalStudentDetail = () => {
         sets: "3",
         reps: "10-12",
         notes: "",
+        image_url: "",
         sort_order: list.length,
         isNew: true,
       });
@@ -315,38 +317,14 @@ const PersonalStudentDetail = () => {
 
                   <div className="divide-y divide-border">
                     {currentExercises.map((ex, idx) => (
-                      <div key={ex.id} className="px-4 py-3 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <input
-                            value={ex.exercise_name}
-                            onChange={(e) => updateExercise(currentDayId!, idx, "exercise_name", e.target.value)}
-                            placeholder="Nome do exercício"
-                            className="flex-1 bg-secondary border border-border rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-primary outline-none"
-                          />
-                          <input
-                            value={ex.sets}
-                            onChange={(e) => updateExercise(currentDayId!, idx, "sets", e.target.value)}
-                            className="w-14 bg-secondary border border-border rounded-lg px-2 py-1.5 text-sm text-center focus:ring-2 focus:ring-primary outline-none"
-                            placeholder="Séries"
-                          />
-                          <span className="text-muted-foreground text-sm">×</span>
-                          <input
-                            value={ex.reps}
-                            onChange={(e) => updateExercise(currentDayId!, idx, "reps", e.target.value)}
-                            className="w-20 bg-secondary border border-border rounded-lg px-2 py-1.5 text-sm text-center focus:ring-2 focus:ring-primary outline-none"
-                            placeholder="Reps"
-                          />
-                          <button onClick={() => removeExercise(currentDayId!, idx)} className="text-destructive hover:text-destructive/80 transition-colors p-1">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <input
-                          value={ex.notes}
-                          onChange={(e) => updateExercise(currentDayId!, idx, "notes", e.target.value)}
-                          placeholder="Observação do personal (opcional)"
-                          className="w-full bg-secondary/50 border border-border rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-primary outline-none"
-                        />
-                      </div>
+                      <ExerciseEditor
+                        key={ex.id}
+                        exercise={ex}
+                        index={idx}
+                        dayId={currentDayId!}
+                        onUpdate={updateExercise}
+                        onRemove={removeExercise}
+                      />
                     ))}
                   </div>
 
