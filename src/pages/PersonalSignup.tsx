@@ -9,8 +9,8 @@ import logo from "@/assets/trainylab-logo.png";
 const PersonalSignup = () => {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Step 1
   const [fullName, setFullName] = useState("");
