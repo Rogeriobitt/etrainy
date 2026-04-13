@@ -118,23 +118,26 @@ const PersonalStudentDetail = () => {
     }
   }, [days]);
 
-  const updateExercise = (dayId: string, index: number, field: string, value: string) => {
+  const updateExercise = (dayId: string, exerciseId: string, field: string, value: string) => {
     setEditedExercises((prev) => {
       const copy = { ...prev };
-      copy[dayId] = [...(copy[dayId] || [])];
-      copy[dayId][index] = { ...copy[dayId][index], [field]: value };
+      copy[dayId] = (copy[dayId] || []).map(ex =>
+        ex.id === exerciseId ? { ...ex, [field]: value } : ex
+      );
       return copy;
     });
   };
 
-  const removeExercise = (dayId: string, index: number) => {
+  const removeExercise = (dayId: string, exerciseId: string) => {
     setEditedExercises((prev) => {
       const copy = { ...prev };
       const list = [...(copy[dayId] || [])];
-      if (list[index].isNew) {
-        list.splice(index, 1);
+      const idx = list.findIndex(ex => ex.id === exerciseId);
+      if (idx === -1) return prev;
+      if (list[idx].isNew) {
+        list.splice(idx, 1);
       } else {
-        list[index] = { ...list[index], deleted: true };
+        list[idx] = { ...list[idx], deleted: true };
       }
       copy[dayId] = list;
       return copy;
@@ -316,11 +319,11 @@ const PersonalStudentDetail = () => {
                   </div>
 
                   <div className="divide-y divide-border">
-                    {currentExercises.map((ex, idx) => (
+                    {currentExercises.map((ex) => (
                       <ExerciseEditor
                         key={ex.id}
                         exercise={ex}
-                        index={idx}
+                        exerciseId={ex.id}
                         dayId={currentDayId!}
                         onUpdate={updateExercise}
                         onRemove={removeExercise}

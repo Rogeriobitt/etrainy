@@ -16,13 +16,13 @@ interface EditableExercise {
 
 interface ExerciseEditorProps {
   exercise: EditableExercise;
-  index: number;
+  exerciseId: string;
   dayId: string;
-  onUpdate: (dayId: string, index: number, field: string, value: string) => void;
-  onRemove: (dayId: string, index: number) => void;
+  onUpdate: (dayId: string, exerciseId: string, field: string, value: string) => void;
+  onRemove: (dayId: string, exerciseId: string) => void;
 }
 
-const ExerciseEditor = ({ exercise, index, dayId, onUpdate, onRemove }: ExerciseEditorProps) => {
+const ExerciseEditor = ({ exercise, exerciseId, dayId, onUpdate, onRemove }: ExerciseEditorProps) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<{ name: string; short_description: string | null }[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
