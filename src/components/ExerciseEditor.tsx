@@ -16,13 +16,13 @@ interface EditableExercise {
 
 interface ExerciseEditorProps {
   exercise: EditableExercise;
-  index: number;
+  exerciseId: string;
   dayId: string;
-  onUpdate: (dayId: string, index: number, field: string, value: string) => void;
-  onRemove: (dayId: string, index: number) => void;
+  onUpdate: (dayId: string, exerciseId: string, field: string, value: string) => void;
+  onRemove: (dayId: string, exerciseId: string) => void;
 }
 
-const ExerciseEditor = ({ exercise, index, dayId, onUpdate, onRemove }: ExerciseEditorProps) => {
+const ExerciseEditor = ({ exercise, exerciseId, dayId, onUpdate, onRemove }: ExerciseEditorProps) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<{ name: string; short_description: string | null }[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -40,7 +40,7 @@ const ExerciseEditor = ({ exercise, index, dayId, onUpdate, onRemove }: Exercise
 
   const searchExercises = async (query: string) => {
     setSearchQuery(query);
-    onUpdate(dayId, index, "exercise_name", query);
+    onUpdate(dayId, exerciseId, "exercise_name", query);
     if (query.length < 2) {
       setSuggestions([]);
       setShowSuggestions(false);
@@ -56,7 +56,7 @@ const ExerciseEditor = ({ exercise, index, dayId, onUpdate, onRemove }: Exercise
   };
 
   const selectSuggestion = (name: string) => {
-    onUpdate(dayId, index, "exercise_name", name);
+    onUpdate(dayId, exerciseId, "exercise_name", name);
     setSearchQuery(name);
     setShowSuggestions(false);
   };
@@ -111,7 +111,7 @@ const ExerciseEditor = ({ exercise, index, dayId, onUpdate, onRemove }: Exercise
               <label className="text-xs text-muted-foreground">Séries</label>
               <input
                 value={exercise.sets}
-                onChange={(e) => onUpdate(dayId, index, "sets", e.target.value)}
+                onChange={(e) => onUpdate(dayId, exerciseId, "sets", e.target.value)}
                 className="w-14 bg-secondary border border-border rounded-lg px-2 py-1.5 text-sm text-center focus:ring-2 focus:ring-primary outline-none"
               />
             </div>
@@ -120,11 +120,11 @@ const ExerciseEditor = ({ exercise, index, dayId, onUpdate, onRemove }: Exercise
               <label className="text-xs text-muted-foreground">Reps</label>
               <input
                 value={exercise.reps}
-                onChange={(e) => onUpdate(dayId, index, "reps", e.target.value)}
+                onChange={(e) => onUpdate(dayId, exerciseId, "reps", e.target.value)}
                 className="w-20 bg-secondary border border-border rounded-lg px-2 py-1.5 text-sm text-center focus:ring-2 focus:ring-primary outline-none"
               />
             </div>
-            <button onClick={() => onRemove(dayId, index)} className="ml-auto text-destructive hover:text-destructive/80 transition-colors p-1">
+            <button onClick={() => onRemove(dayId, exerciseId)} className="ml-auto text-destructive hover:text-destructive/80 transition-colors p-1">
               <Trash2 className="w-4 h-4" />
             </button>
           </div>
@@ -132,7 +132,7 @@ const ExerciseEditor = ({ exercise, index, dayId, onUpdate, onRemove }: Exercise
           {/* Notes */}
           <input
             value={exercise.notes}
-            onChange={(e) => onUpdate(dayId, index, "notes", e.target.value)}
+            onChange={(e) => onUpdate(dayId, exerciseId, "notes", e.target.value)}
             placeholder="Observação do personal (opcional)"
             className="w-full bg-secondary/50 border border-border rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-primary outline-none"
           />
