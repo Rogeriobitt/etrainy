@@ -144,3 +144,4 @@ const ExerciseEditor = ({ exercise, exerciseId, dayId, onUpdate, onRemove }: Exe
 
 export { ExerciseEditor };
 export type { EditableExercise };
+
