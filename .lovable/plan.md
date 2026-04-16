@@ -1,25 +1,35 @@
 
+O usuário (Rogério Bittencourt) hoje é aluno e quer virar Personal Trainer para testar o app pelo lado do professor.
 
-## Problem
+Pelos dados já consultados anteriormente, o `user_id` do Rogério existe em `profiles` mas não tem registro em `personal_trainers`. Preciso criar esse vínculo.
 
-The exercise editing appears to work in the code, but there's a critical **index mismatch bug** that breaks editing and removing exercises.
+## O que vou fazer
 
-On line 247, exercises are filtered to remove deleted ones:
-```ts
-const currentExercises = currentDayId ? (editedExercises[currentDayId] || []).filter((e) => !e.deleted) : [];
-```
+Converter a conta **Rogério Bittencourt** em Personal Trainer inserindo um registro na tabela `personal_trainers` com:
 
-Then on line 319-328, the filtered array's index (`idx`) is passed to `onUpdate` and `onRemove`. But `updateExercise` and `removeExercise` use that index to access the **unfiltered** `editedExercises[dayId]` array. After any deletion, the indices no longer align, causing edits to target the wrong exercise or crash.
+- `user_id`: o user_id atual do Rogério
+- `personal_code`: gerado automaticamente via `nextval_personal_code()` (formato `PT-XXXXX`)
+- `full_name`: "Rogério Bittencourt" (copiado do profile)
+- demais campos opcionais (cref, city, state, phone) ficam nulos — você pode completar depois em /profile
 
-## Fix
+## Como a mudança afeta o login
 
-1. **`src/pages/PersonalStudentDetail.tsx`** — Stop using array index for exercise identification. Instead, use the exercise `id` to find the correct item:
+A tela `/auth` já redireciona automaticamente: se existe registro em `personal_trainers` para o `user_id` logado → vai para `/dashboard/personal`; senão → `/dashboard/aluno`.
 
-   - Change `updateExercise(dayId, index, field, value)` to find by `id` instead of array index
-   - Change `removeExercise(dayId, index)` to find by `id` instead of array index  
-   - Update `ExerciseEditor` calls to pass exercise `id` instead of filtered `idx`
+Então, após criar o registro:
+1. Você faz **logout** e **login novamente** com a mesma conta
+2. Será redirecionado direto para `/dashboard/personal`
+3. Terá acesso a todas as telas do professor: gestão de alunos, convites, edição de séries, etc.
 
-2. **`src/components/ExerciseEditor.tsx`** — Update the props interface to use `exerciseId: string` instead of `index: number`, and pass `exerciseId` to the `onUpdate` and `onRemove` callbacks.
+## Importante
 
-This is a small, surgical fix — two files, no database changes needed. The add, save, and UI rendering logic all remain the same.
+- Você **não perde** seu profile de aluno — os dados continuam lá. Apenas ganha o papel de personal em paralelo.
+- Como hoje o redirect prioriza personal, sua conta passa a abrir como professor por padrão.
+- Se quiser voltar a ver como aluno depois, posso (a) remover o registro de personal, ou (b) criar uma tela de alternância de papéis. Avise se quiser uma dessas opções no futuro.
 
+## Passos técnicos
+
+1. Rodar um `INSERT` em `personal_trainers` via ferramenta de inserção de dados, usando o `user_id` do Rogério já identificado e `nextval_personal_code()` para o código.
+2. Confirmar com você que deu certo e te orientar a deslogar/logar.
+
+Nenhuma mudança de código ou schema é necessária.
