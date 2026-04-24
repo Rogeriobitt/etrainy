@@ -491,19 +491,36 @@ const StudentSignup = () => {
           <p className="text-muted-foreground text-sm">Cadastro de Aluno</p>
         </div>
 
+        {refTrainerName && !refInvalid && (
+          <div className="bg-primary/10 border border-primary/30 rounded-lg px-4 py-3 mb-6 text-center">
+            <p className="text-xs text-muted-foreground">Você foi convidado pelo professor</p>
+            <p className="text-sm font-semibold text-primary">{refTrainerName}</p>
+          </div>
+        )}
+        {refInvalid && (
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg px-4 py-3 mb-6 text-center">
+            <p className="text-xs text-destructive">
+              Link de convite inválido. Você pode continuar o cadastro normalmente.
+            </p>
+          </div>
+        )}
+
         {/* Progress bar */}
         <div className="flex items-center gap-1 mb-8">
-          {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
-            <div
-              key={i}
-              className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                i < step ? "bg-primary" : "bg-secondary"
-              }`}
-            />
-          ))}
+          {Array.from({ length: totalVisibleSteps }).map((_, i) => {
+            const visibleIndex = skipPersonalStep && step >= 5 ? step - 1 : step;
+            return (
+              <div
+                key={i}
+                className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+                  i < visibleIndex ? "bg-primary" : "bg-secondary"
+                }`}
+              />
+            );
+          })}
         </div>
         <p className="text-xs text-muted-foreground text-center mb-6">
-          Etapa {step} de {TOTAL_STEPS}
+          Etapa {skipPersonalStep && step >= 5 ? step - 1 : step} de {totalVisibleSteps}
         </p>
 
         {/* Step content */}
