@@ -120,6 +120,9 @@ const PersonalStudents = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold truncate">{s.full_name || "Aluno"}</p>
+                    {s.email && (
+                      <p className="text-xs text-muted-foreground truncate">{s.email}</p>
+                    )}
                     <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-1">
                       {s.goal && <span>{OBJECTIVES[s.goal] || s.goal}</span>}
                       {s.experience_level && <span>{LEVELS[s.experience_level] || s.experience_level}</span>}

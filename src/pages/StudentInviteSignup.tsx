@@ -83,6 +83,7 @@ const StudentInviteSignup = () => {
         .from("profiles")
         .update({
           full_name: invitation.student_name,
+          email: invitation.student_email,
           birth_date: birthDate || null,
           sex: sex || null,
           weight: weight ? parseFloat(weight) : null,
