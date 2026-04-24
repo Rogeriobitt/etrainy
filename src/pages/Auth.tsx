@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Mail, Lock, User, ArrowRight, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import logo from "@/assets/trainylab-logo.png";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -74,9 +75,8 @@ const Auth = () => {
     <div className="min-h-screen bg-background flex items-center justify-center px-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-heading tracking-widest mb-2">
-            FIT<span className="text-gradient">FLOW</span>
-          </h1>
+          <img src={logo} alt="TrainyLab" className="h-16 md:h-20 w-auto mx-auto mb-4" />
+          <h1 className="text-4xl font-heading tracking-wide mb-2">TrainyLab</h1>
           <p className="text-muted-foreground">
             {isLogin ? "Entre na sua conta" : "Crie sua conta grátis"}
           </p>
