@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { persistProfileAfterSignup } from "@/lib/persistProfileAfterSignup";
 import {
   ArrowRight,
   ArrowLeft,
@@ -200,28 +201,24 @@ const StudentSignup = () => {
 
       // 3. Update profile with all data
       const linkedByRef = skipPersonalStep && !!refTrainerId;
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .update({
-          full_name: fullName,
-          email,
-          birth_date: birthDate,
-          sex,
-          weight: parseFloat(weight),
-          height: parseFloat(height),
-          goal,
-          experience_level: experience,
-          training_days: days,
-          training_location: location,
-          has_injury: hasInjury,
-          injury_description: hasInjury ? injuryDesc : null,
-          has_personal: linkedByRef ? true : hasPersonal,
-          personal_code: hasPersonal ? personalCode : null,
-          personal_trainer_id: linkedByRef ? refTrainerId : null,
-          avatar_url: avatarUrl,
-        })
-        .eq("user_id", userId);
-      if (profileError) throw profileError;
+      await persistProfileAfterSignup(userId, {
+        full_name: fullName,
+        email,
+        birth_date: birthDate,
+        sex,
+        weight: parseFloat(weight),
+        height: parseFloat(height),
+        goal,
+        experience_level: experience,
+        training_days: days,
+        training_location: location,
+        has_injury: hasInjury,
+        injury_description: hasInjury ? injuryDesc : null,
+        has_personal: linkedByRef ? true : hasPersonal,
+        personal_code: hasPersonal ? personalCode : null,
+        personal_trainer_id: linkedByRef ? refTrainerId : null,
+        avatar_url: avatarUrl,
+      });
 
       toast({ title: "Conta criada com sucesso! 🎉" });
       navigate("/dashboard/aluno");
