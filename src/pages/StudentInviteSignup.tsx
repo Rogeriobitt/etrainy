@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import { Loader2, CheckCircle2 } from "lucide-react";
 import logo from "@/assets/trainylab-logo.png";
+import { persistProfileAfterSignup } from "@/lib/persistProfileAfterSignup";
 
 const StudentInviteSignup = () => {
   const { token } = useParams<{ token: string }>();
@@ -79,20 +80,17 @@ const StudentInviteSignup = () => {
 
       // 2. Update profile with student data
       const personalTrainerId = invitation.personal_trainers?.id || invitation.personal_trainer_id;
-      await supabase
-        .from("profiles")
-        .update({
-          full_name: invitation.student_name,
-          email: invitation.student_email,
-          birth_date: birthDate || null,
-          sex: sex || null,
-          weight: weight ? parseFloat(weight) : null,
-          height: height ? parseFloat(height) : null,
-          goal: goal || null,
-          has_personal: true,
-          personal_trainer_id: personalTrainerId,
-        })
-        .eq("user_id", userId);
+      await persistProfileAfterSignup(userId, {
+        full_name: invitation.student_name,
+        email: invitation.student_email,
+        birth_date: birthDate || null,
+        sex: sex || null,
+        weight: weight ? parseFloat(weight) : null,
+        height: height ? parseFloat(height) : null,
+        goal: goal || null,
+        has_personal: true,
+        personal_trainer_id: personalTrainerId,
+      });
 
       // 3. Mark invitation as used
       await supabase
