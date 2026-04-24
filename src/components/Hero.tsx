@@ -15,7 +15,7 @@ const Hero = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="flex flex-col items-center text-center max-w-2xl mx-auto"
         >
-          <img src={logo} alt="TrainyLab" className="h-20 md:h-28 w-auto mb-8" />
+          <img src={logo} alt="Trainylab" className="h-20 md:h-28 w-auto mb-8" />
           <h1 className="text-xl md:text-3xl font-heading leading-none mb-4 tracking-wider">
             A CENTRAL DE TREINOS PARA O <span className="text-gradient">PERSONAL</span>.
           </h1>
@@ -33,7 +33,7 @@ const Hero = () => {
             onClick={() => navigate("/auth")}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            Entrar no meu app TrainyLab
+            Entrar no meu app Trainylab
           </button>
         </motion.div>
       </div>
