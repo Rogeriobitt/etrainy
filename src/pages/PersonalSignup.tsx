@@ -112,7 +112,7 @@ const PersonalSignup = () => {
               onSubmit={handleStep1}
               className="flex flex-col items-center"
             >
-              <img src={logo} alt="TrainyLab" className="h-14 md:h-20 w-auto mb-8" />
+              <img src={logo} alt="Trainylab" className="h-14 md:h-20 w-auto mb-8" />
               <h1 className="text-lg md:text-2xl font-heading tracking-wider mb-1 text-center">
                 CRIE SUA CONTA <span className="text-gradient">TRAINYLAB</span>
               </h1>
@@ -173,7 +173,7 @@ const PersonalSignup = () => {
               onSubmit={handleStep2}
               className="flex flex-col items-center"
             >
-              <img src={logo} alt="TrainyLab" className="h-14 md:h-20 w-auto mb-8" />
+              <img src={logo} alt="Trainylab" className="h-14 md:h-20 w-auto mb-8" />
               <h1 className="text-lg md:text-2xl font-heading tracking-wider mb-1 text-center">
                 COMPLETE SEU PERFIL <span className="text-gradient">PROFISSIONAL</span>
               </h1>

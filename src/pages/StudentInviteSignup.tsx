@@ -124,7 +124,7 @@ const StudentInviteSignup = () => {
           animate={{ opacity: 1, y: 0 }}
           className="text-center max-w-sm"
         >
-          <img src={logo} alt="TrainyLab" className="h-14 md:h-20 w-auto mb-8 mx-auto" />
+          <img src={logo} alt="Trainylab" className="h-14 md:h-20 w-auto mb-8 mx-auto" />
           <h1 className="text-lg font-heading tracking-wider mb-3">CONVITE INVÁLIDO</h1>
           <p className="text-sm text-muted-foreground mb-6">
             Este link de convite é inválido ou já foi utilizado.
@@ -149,13 +149,13 @@ const StudentInviteSignup = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-sm text-center flex flex-col items-center"
         >
-          <img src={logo} alt="TrainyLab" className="h-14 md:h-20 w-auto mb-8" />
+          <img src={logo} alt="Trainylab" className="h-14 md:h-20 w-auto mb-8" />
           <CheckCircle2 className="w-14 h-14 text-primary mb-4" />
           <h1 className="text-lg md:text-2xl font-heading tracking-wider mb-3">
             CADASTRO <span className="text-gradient">CONCLUÍDO!</span>
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Bem-vindo ao TrainyLab! Agora você já pode acessar seus treinos com o seu professor.
+            Bem-vindo ao Trainylab! Agora você já pode acessar seus treinos com o seu professor.
           </p>
           <p className="text-xs text-muted-foreground mt-4">
             Confirme seu e-mail para acessar o app.
@@ -175,7 +175,7 @@ const StudentInviteSignup = () => {
           onSubmit={handleSubmit}
           className="flex flex-col items-center"
         >
-          <img src={logo} alt="TrainyLab" className="h-14 md:h-20 w-auto mb-6" />
+          <img src={logo} alt="Trainylab" className="h-14 md:h-20 w-auto mb-6" />
           <h1 className="text-lg md:text-2xl font-heading tracking-wider mb-2 text-center">
             BEM-VINDO AO <span className="text-gradient">TRAINYLAB</span>
           </h1>
