@@ -483,7 +483,7 @@ const StudentSignup = () => {
         {/* Header */}
         <div className="text-center mb-6">
           <h1 className="text-4xl font-heading tracking-widest mb-1">
-            FIT<span className="text-gradient">FLOW</span>
+            TRAINY<span className="text-gradient">LAB</span>
           </h1>
           <p className="text-muted-foreground text-sm">Cadastro de Aluno</p>
         </div>
