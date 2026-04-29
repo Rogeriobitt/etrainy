@@ -79,7 +79,7 @@ const StudentDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, personal_trainer_id")
         .eq("user_id", user!.id)
         .maybeSingle();
       if (error) throw error;
@@ -89,6 +89,7 @@ const StudentDashboard = () => {
   });
 
   const firstName = profile?.full_name?.split(" ")[0] || "Aluno";
+  const hasPersonal = !!profile?.personal_trainer_id;
 
   if (authLoading || isLoading) {
     return (
@@ -109,11 +110,11 @@ const StudentDashboard = () => {
           <NotificationBell />
         </div>
         <p className="text-muted-foreground mb-10 max-w-xl">
-          Aqui você acompanha seus treinos e pode usar a assistente de IA para criar ou atualizar sua série.
+          Aqui você acompanha sua série de treinos preparada pelo seu Personal Trainer.
         </p>
 
         {/* Empty state when no active plan */}
-        <ActivePlanCheck navigate={navigate} />
+        <ActivePlanCheck hasPersonal={hasPersonal} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cards.map((card) => {
