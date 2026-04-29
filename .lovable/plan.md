@@ -1,71 +1,69 @@
-Vou corrigir o vínculo aluno-professor no cadastro por link de convite, mantendo o fluxo visual praticamente igual e sem recriar a estrutura principal do app.
+# Limpeza total: contas e dados de professores/alunos
 
-## O que encontrei na varredura
+Reset completo do sistema para começar do zero, preservando admins e o conteúdo de catálogo.
 
-- O professor gera dois tipos de link:
-  - `/cadastro/aluno?ref=PERSONAL_TRAINER_ID` no dashboard do professor.
-  - `/convite/:token` pelo modal “Adicionar aluno”.
-- A lista do professor em `/personal/alunos` busca alunos por:
-  ```ts
-  supabase.from("profiles").select("*").eq("personal_trainer_id", personal.id)
-  ```
-- No banco atual, existem professores e alunos cadastrados, mas `profiles.personal_trainer_id` está vazio para todos os perfis. Por isso nenhum aluno aparece para o professor.
-- A tabela `student_invitations` também está vazia no momento, então o cenário testado parece estar usando principalmente o link genérico `?ref=...`.
-- A função utilitária atual tenta atualizar/inserir o perfil logo após o signup no cliente. Isso pode falhar em alguns casos por timing de autenticação/sessão ou RLS, deixando o perfil criado pelo gatilho do banco sem `personal_trainer_id`.
+## O que será apagado
 
-## Correção proposta
+Migration SQL única que executa `DELETE` na ordem correta (das tabelas-folha para as raízes), preservando apenas usuários com role `admin`:
 
-1. **Fortalecer a gravação do vínculo no cadastro**
-   - Atualizar `src/lib/persistProfileAfterSignup.ts` para:
-     - aguardar a sessão do usuário recém-criado estar disponível;
-     - tentar `upsert`/update do perfil de forma mais confiável;
-     - garantir que `personal_trainer_id`, `has_personal`, `email` e dados do aluno sejam persistidos;
-     - lançar erro claro se o vínculo não for salvo.
+1. `workout_exercises`
+2. `workout_days`
+3. `workout_plans`
+4. `progress_entries`
+5. `bioimpedance_uploads` + arquivos do bucket `bioimpedance` (via `storage.objects`)
+6. `student_invitations`
+7. `notifications`
+8. `personal_trainers`
+9. `profiles` (exceto admins)
+10. `user_roles` (exceto role `admin`)
+11. `auth.users` (exceto admins) — remove os logins definitivamente
 
-2. **Corrigir o cadastro por link genérico `?ref=`**
-   - Em `src/pages/StudentSignup.tsx`:
-     - validar que `ref` aponta para um professor existente;
-     - só finalizar cadastro vinculado se o `ref` for válido;
-     - salvar `profiles.personal_trainer_id = refTrainerId`;
-     - salvar `has_personal = true` e `email` do aluno.
+Reset da sequência: `ALTER SEQUENCE personal_code_seq RESTART WITH 1` para que o próximo professor cadastrado receba `PT-1`.
 
-3. **Corrigir o cadastro por convite individual `/convite/:token`**
-   - Em `src/pages/StudentInviteSignup.tsx`:
-     - usar diretamente o `personal_trainer_id` do convite como fonte principal;
-     - persistir o vínculo no perfil do aluno antes de marcar o convite como usado;
-     - só marcar o convite como usado depois que o perfil estiver realmente vinculado.
+## O que será preservado
 
-4. **Melhorar a listagem para mostrar e-mail corretamente**
-   - Em `src/pages/PersonalStudents.tsx`:
-     - manter a query principal por `profiles.personal_trainer_id`;
-     - garantir que nome e e-mail gravados em `profiles` apareçam na lista.
-   - Não vou mudar layout, apenas ajustar o necessário se houver algum tratamento que esconda dados.
+- Contas com role `admin` (login, perfil e role mantidos)
+- Catálogo `exercises` e `exercise_equivalents`
+- `video_classes` e buckets `class-videos`, `class-thumbnails`, `avatars`
+- Estrutura do banco, RLS, funções e triggers
 
-5. **Verificação no banco e diagnóstico final**
-   - Rodar queries de leitura para confirmar:
-     - quantos perfis estão vinculados;
-     - se a coluna `profiles.personal_trainer_id` recebeu o ID do professor;
-     - se a query de `/personal/alunos` retorna os alunos esperados.
+## Detalhes técnicos
 
-## Sem mudanças desnecessárias
+A migration usa um CTE para identificar admins e excluir todo o resto:
 
-- Não vou mudar o fluxo visual.
-- Não vou criar FK nova em `workout_exercises` ou mexer em treinos.
-- Não vou mudar a tela do professor além do mínimo necessário.
-- O vínculo continuará sendo salvo em `profiles.personal_trainer_id`.
+```sql
+WITH admins AS (
+  SELECT user_id FROM public.user_roles WHERE role = 'admin'
+)
+DELETE FROM public.workout_exercises;
+DELETE FROM public.workout_days;
+DELETE FROM public.workout_plans;
+DELETE FROM public.progress_entries;
+DELETE FROM public.bioimpedance_uploads;
+DELETE FROM storage.objects WHERE bucket_id = 'bioimpedance';
+DELETE FROM public.student_invitations;
+DELETE FROM public.notifications;
+DELETE FROM public.personal_trainers;
+DELETE FROM public.profiles
+  WHERE user_id NOT IN (SELECT user_id FROM admins);
+DELETE FROM public.user_roles WHERE role <> 'admin';
+DELETE FROM auth.users
+  WHERE id NOT IN (SELECT user_id FROM admins);
+ALTER SEQUENCE public.personal_code_seq RESTART WITH 1;
+```
 
-## Resumo técnico esperado ao final
+## Verificação pós-execução
 
-Ao concluir, vou te informar:
+Consulta de confirmação:
+```sql
+SELECT
+  (SELECT count(*) FROM auth.users)            AS usuarios,
+  (SELECT count(*) FROM public.profiles)        AS perfis,
+  (SELECT count(*) FROM public.personal_trainers) AS professores,
+  (SELECT count(*) FROM public.workout_plans)  AS planos;
+```
+Esperado: apenas a contagem de admins em `usuarios` e `perfis`; zero nas demais.
 
-- **Tabela/coluna do vínculo:** `profiles.personal_trainer_id`.
-- **Problema encontrado:** o perfil do aluno estava sendo criado, mas o `personal_trainer_id` não estava sendo persistido de forma confiável após o cadastro.
-- **Query final da listagem:**
-  ```ts
-  supabase
-    .from("profiles")
-    .select("*")
-    .eq("personal_trainer_id", personal.id)
-  ```
+## Aviso
 
-Também vou listar os componentes/arquivos alterados.
+Ação **irreversível**. Após aprovar, todos os professores e alunos atuais perdem acesso e seus dados (treinos, progresso, bioimpedância, convites, notificações) são apagados permanentemente.
