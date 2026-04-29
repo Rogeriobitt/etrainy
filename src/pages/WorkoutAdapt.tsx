@@ -327,13 +327,13 @@ const WorkoutAdapt = () => {
           <Luggage className="w-16 h-16 text-primary mx-auto mb-4" />
           <h1 className="text-2xl font-heading tracking-wider mb-3">Sem série para adaptar</h1>
           <p className="text-muted-foreground mb-6">
-            Você precisa ter uma série de musculação criada antes de poder adaptá-la.
+            Você ainda não tem uma série ativa. Fale com seu Personal Trainer para que ele monte sua próxima série.
           </p>
           <button
-            onClick={() => navigate("/assistente/treino")}
+            onClick={() => navigate("/aluno/dashboard")}
             className="gradient-accent px-6 py-2.5 rounded-lg font-semibold text-primary-foreground text-sm"
           >
-            Criar série com a Assistente
+            Voltar ao Dashboard
           </button>
         </div>
       </div>

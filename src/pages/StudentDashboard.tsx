@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
-import { Dumbbell, Sparkles, Home, BarChart3, ArrowRight, Loader2, ClipboardList } from "lucide-react";
+import { Dumbbell, Home, BarChart3, ArrowRight, Loader2, ClipboardList } from "lucide-react";
 import NotificationBell from "@/components/NotificationBell";
 import { useEffect } from "react";
 import { useQuery as useRQQuery } from "@tanstack/react-query";
 
-const ActivePlanCheck = ({ navigate }: { navigate: (path: string) => void }) => {
+const ActivePlanCheck = ({ hasPersonal }: { hasPersonal: boolean }) => {
   const { user } = useAuth();
   const { data: plan, isLoading } = useRQQuery({
     queryKey: ["active-plan-check", user?.id],
@@ -30,16 +30,14 @@ const ActivePlanCheck = ({ navigate }: { navigate: (path: string) => void }) => 
   return (
     <div className="bg-card border border-primary/20 rounded-xl p-6 mb-8 text-center">
       <ClipboardList className="w-10 h-10 text-primary mx-auto mb-3" />
-      <h2 className="font-heading text-lg tracking-wide mb-1">Você ainda não tem uma série ativa</h2>
-      <p className="text-sm text-muted-foreground mb-4">
-        Use a Assistente de IA para criar seu primeiro treino personalizado.
+      <h2 className="font-heading text-lg tracking-wide mb-1">
+        {hasPersonal ? "Aguarde seu personal preparar sua série" : "Você ainda não tem um Personal vinculado"}
+      </h2>
+      <p className="text-sm text-muted-foreground">
+        {hasPersonal
+          ? "Seu Personal Trainer está montando seu treino. Assim que estiver pronto, ele aparecerá aqui."
+          : "Para receber sua série de treinos, peça o link de convite ao seu Personal Trainer e cadastre-se por ele."}
       </p>
-      <button
-        onClick={() => navigate("/assistente/treino")}
-        className="gradient-accent px-6 py-2.5 rounded-lg font-semibold text-primary-foreground text-sm inline-flex items-center gap-2 hover:opacity-90 transition-opacity"
-      >
-        <Sparkles className="w-4 h-4" /> Criar série com IA
-      </button>
     </div>
   );
 };
@@ -51,13 +49,6 @@ const cards = [
     button: "Ver Série",
     path: "/treinos/minha-serie",
     icon: Dumbbell,
-  },
-  {
-    title: "Criar ou Atualizar com IA",
-    text: "Responda a algumas perguntas e deixe a assistente sugerir uma nova série para o seu objetivo.",
-    button: "Usar Assistente",
-    path: "/assistente/treino",
-    icon: Sparkles,
   },
   {
     title: "Treinar sem Academia",
@@ -88,7 +79,7 @@ const StudentDashboard = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, personal_trainer_id")
         .eq("user_id", user!.id)
         .maybeSingle();
       if (error) throw error;
@@ -98,6 +89,7 @@ const StudentDashboard = () => {
   });
 
   const firstName = profile?.full_name?.split(" ")[0] || "Aluno";
+  const hasPersonal = !!profile?.personal_trainer_id;
 
   if (authLoading || isLoading) {
     return (
@@ -118,11 +110,11 @@ const StudentDashboard = () => {
           <NotificationBell />
         </div>
         <p className="text-muted-foreground mb-10 max-w-xl">
-          Aqui você acompanha seus treinos e pode usar a assistente de IA para criar ou atualizar sua série.
+          Aqui você acompanha sua série de treinos preparada pelo seu Personal Trainer.
         </p>
 
         {/* Empty state when no active plan */}
-        <ActivePlanCheck navigate={navigate} />
+        <ActivePlanCheck hasPersonal={hasPersonal} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {cards.map((card) => {
