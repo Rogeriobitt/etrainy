@@ -35,7 +35,7 @@ const StudentInviteSignup = () => {
 
       const { data, error } = await supabase
         .from("student_invitations" as any)
-        .select("*, personal_trainers(full_name, id)")
+        .select("*")
         .eq("token", token)
         .eq("status", "pending")
         .maybeSingle();
@@ -47,7 +47,14 @@ const StudentInviteSignup = () => {
       }
 
       setInvitation(data);
-      setPersonalName((data as any).personal_trainers?.full_name || "seu professor");
+      let trainerName = (data as any).personal_name as string | null;
+      if (!trainerName && (data as any).personal_trainer_id) {
+        const { data: pt } = await supabase.rpc("get_personal_public_info" as any, {
+          _personal_id: (data as any).personal_trainer_id,
+        });
+        trainerName = (pt as any)?.[0]?.full_name || null;
+      }
+      setPersonalName(trainerName || "seu professor");
       setLoadingInvite(false);
     };
     loadInvitation();
@@ -79,7 +86,7 @@ const StudentInviteSignup = () => {
       if (!userId) throw new Error("Erro ao criar conta");
 
       // 2. Update profile with student data
-      const personalTrainerId = invitation.personal_trainers?.id || invitation.personal_trainer_id;
+      const personalTrainerId = invitation.personal_trainer_id;
       await persistProfileAfterSignup(userId, {
         full_name: invitation.student_name,
         email: invitation.student_email,

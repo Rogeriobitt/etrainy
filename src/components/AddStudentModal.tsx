@@ -35,6 +35,7 @@ const AddStudentModal = ({ open, onOpenChange, personalTrainerId, personalName }
         .from("student_invitations" as any)
         .insert({
           personal_trainer_id: personalTrainerId,
+          personal_name: personalName,
           student_name: studentName,
           student_email: studentEmail,
         } as any)
