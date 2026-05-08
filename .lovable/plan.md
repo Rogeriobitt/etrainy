@@ -1,61 +1,97 @@
-# Remover acesso à IA de criação de série na conta do aluno
+## Verificação geral do fluxo: Personal → Convite → Aluno → Dashboard
 
-A IA de geração de treino deve ser exclusiva do professor. O aluno hoje pode criar série sozinho via `/assistente/treino`, e a UI dele tem múltiplos pontos de entrada para essa funcionalidade. O plano abaixo retira tudo isso do aluno e mantém o assistente apenas para o personal.
+Fiz uma auditoria das três etapas e encontrei **um bug que explica o "Convite inválido"** e algumas melhorias no fluxo. Abaixo o que precisa ser corrigido.
 
-## Diagnóstico
+---
 
-A IA do aluno está acessível em três lugares (todos navegam para `/assistente/treino` → `WorkoutAssistant.tsx`):
+### 1. Cadastro do Personal/Professor (`/cadastro/personal`)
 
-1. `src/pages/StudentDashboard.tsx`
-   - Card "Criar ou Atualizar com IA" no grid principal
-   - Componente `ActivePlanCheck` que mostra um banner "Criar série com IA" quando o aluno não tem plano
-2. `src/pages/MyWorkout.tsx`
-   - Estado vazio "Você ainda não tem uma série ativa" com botão "Criar série com IA"
-3. `src/pages/WorkoutAdapt.tsx` (linha ~333)
-   - Botão "Criar série com a Assistente" no fluxo de adaptação de treino
+**Status:** funcionando.
+- Cria conta no auth, gera `personal_code` (ex.: `PT-10001`) via `nextval_personal_code()`, insere em `personal_trainers`, atualiza `profiles.full_name` e redireciona para `/dashboard/personal`.
+- Único ponto a melhorar: o trigger `handle_new_user` cria `profiles` com `role = 'user'` mesmo para personals. Não bloqueia nada hoje (nós distinguimos pelo registro em `personal_trainers`), mas vale documentar.
 
-A versão do professor (`/assistente/treino/personal` → `PersonalAssistant.tsx`) é separada e continua disponível normalmente no `PersonalDashboard` e no `PersonalStudentDetail`.
+---
 
-## Mudanças
+### 2. Convite do Personal para o Aluno — **AQUI está o bug**
 
-### 1. Bloquear a rota do aluno
+Existem **dois caminhos** de convite e os dois têm problemas:
 
-`src/pages/WorkoutAssistant.tsx`: trocar a tela por uma mensagem clara informando que a criação de série é feita pelo personal trainer, com CTA "Voltar ao Dashboard". Mantém o arquivo (rota continua existindo) mas remove o fluxo de geração de IA. Isso protege contra acesso direto via URL.
+**A) Convite individual (`AddStudentModal` → `/convite/:token`)** — é o que dá "**Link inválido**".
 
-Alternativa mais agressiva: remover a rota `/assistente/treino` do `App.tsx`. Vou aplicar a versão "tela bloqueada" porque é mais amigável caso o aluno tenha o link salvo.
+A página `StudentInviteSignup.tsx` faz:
+```ts
+.from("student_invitations")
+.select("*, personal_trainers(full_name, id)")
+.eq("token", token)
+.eq("status", "pending")
+```
 
-### 2. Limpar entradas no Dashboard do aluno
+Dois problemas combinados:
+1. A tabela `student_invitations` **não tem foreign key** declarada para `personal_trainers`, então o embed `personal_trainers(...)` falha no PostgREST (relationship not found) e a consulta retorna erro → o código cai em `setInvalid(true)`.
+2. Mesmo se a FK existisse, a página é acessada por usuário **anônimo** (ainda sem login), e a RLS de `personal_trainers` só permite SELECT para `authenticated` — o nome do professor não apareceria.
 
-`src/pages/StudentDashboard.tsx`:
-- Remover o card "Criar ou Atualizar com IA" do array `cards`
-- Remover o componente `ActivePlanCheck` (e seu uso) — o aluno sem plano passa a ver uma mensagem "Aguarde seu personal preparar sua série" no lugar
-- Adicionar um aviso simples quando o aluno não tem `personal_trainer_id`: instruí-lo a procurar um personal e usar o link de convite
+**Correções:**
+- Criar a FK `student_invitations.personal_trainer_id → personal_trainers(id)` (com índice).
+- Remover o embed: buscar primeiro o convite pelo token, depois — se precisar do nome — buscar via uma view/RPC pública segura. Mais simples: armazenar `personal_name` direto em `student_invitations` no momento da criação (já temos `personalName` no `AddStudentModal`), evitando consulta cruzada antes do login.
+- Ajustar `StudentInviteSignup.tsx` para usar essa coluna nova em vez do embed.
 
-### 3. Limpar entradas em "Minha Série"
+**B) Link genérico do dashboard (`/cadastro/aluno?ref={personal.id}`)** — funciona, mas:
+- Em `StudentSignup.tsx` ele consulta `personal_trainers` por `id` ainda como anônimo — pelo mesmo motivo de RLS, o nome do professor não aparece (cai em `refInvalid`).
+- Solução: criar uma RPC `get_personal_public_info(id)` SECURITY DEFINER que retorna apenas `{ id, full_name, personal_code }`, ou uma view pública que exponha só esses 3 campos. Usar isso tanto no `?ref=` quanto na busca por `personal_code`.
 
-`src/pages/MyWorkout.tsx` (linhas 268-276): substituir o estado vazio com botão "Criar série com IA" por uma mensagem neutra: "Seu personal ainda não criou sua série. Aguarde a aprovação." (sem CTA para IA).
+---
 
-### 4. Limpar fluxo de adaptação
+### 3. Vinculação aluno ↔ personal e visibilidade no dashboard
 
-`src/pages/WorkoutAdapt.tsx`: remover o botão "Criar série com a Assistente" (linha ~333) do estado vazio. Substituir por mensagem orientando o aluno a falar com o personal.
+**Status:** o mecanismo está correto, mas depende do passo 2 funcionar.
 
-### 5. Não mexer no professor
+- Após a correção, `StudentInviteSignup` grava `profiles.personal_trainer_id = invitation.personal_trainer_id` e `has_personal = true` via `persistProfileAfterSignup` (que já tem retry + verificação).
+- A RLS "Personals can view student profiles" filtra `profiles` por `personal_trainer_id IN (SELECT id FROM personal_trainers WHERE user_id = auth.uid())` — correto.
+- O `PersonalDashboard` e `PersonalStudents` já listam por esse mesmo critério.
 
-- `PersonalDashboard.tsx`, `PersonalStudentDetail.tsx`, `PersonalAssistant.tsx` ficam como estão.
-- A rota `/assistente/treino/personal` continua ativa.
-- Edge functions de IA (se existirem) não precisam ser tocadas — apenas a UI do aluno deixa de invocá-las. O `PersonalAssistant` continua usando.
+Verificações extras a fazer após a correção:
+- Marcar o convite como `used` (já é feito).
+- Garantir que o aluno apareça em `/personal/alunos` imediatamente (basta invalidar a query `student-count` / `personal-students` — não é crítico pois a próxima visita já busca atualizado).
 
-## O que NÃO muda
+---
 
-- Estrutura de tabelas, RLS e edge functions: nenhum DDL.
-- Capacidade do aluno de visualizar sua série, marcar treinos concluídos, registrar progresso e bioimpedância.
-- Fluxo de evolução automática dos 21 dias e a tela de adaptar treinos para casa (apenas o atalho "criar série" é removido — adaptação em si continua disponível quando há série ativa).
+### Detalhes técnicos das mudanças
 
-## Resumo dos arquivos editados
+**Migração SQL:**
+```sql
+-- 1. Coluna para guardar o nome do personal no momento do convite
+ALTER TABLE public.student_invitations
+  ADD COLUMN personal_name text;
 
-- `src/pages/WorkoutAssistant.tsx` — substituir conteúdo por tela de bloqueio
-- `src/pages/StudentDashboard.tsx` — remover card de IA e `ActivePlanCheck`
-- `src/pages/MyWorkout.tsx` — remover botão "Criar série com IA" do estado vazio
-- `src/pages/WorkoutAdapt.tsx` — remover botão "Criar série com a Assistente" do estado vazio
+-- 2. Foreign key + índice
+ALTER TABLE public.student_invitations
+  ADD CONSTRAINT student_invitations_personal_trainer_id_fkey
+  FOREIGN KEY (personal_trainer_id) REFERENCES public.personal_trainers(id) ON DELETE CASCADE;
 
-Atualizar também a memória `mem://features/workout-assistant` para registrar que o assistente de IA é exclusivo do personal.
+CREATE INDEX IF NOT EXISTS idx_student_invitations_personal_trainer_id
+  ON public.student_invitations(personal_trainer_id);
+
+-- 3. RPC pública para buscar info mínima do personal (usada por aluno anônimo)
+CREATE OR REPLACE FUNCTION public.get_personal_public_info(_personal_id uuid)
+RETURNS TABLE(id uuid, full_name text, personal_code text)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT id, full_name, personal_code
+  FROM public.personal_trainers
+  WHERE id = _personal_id
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_personal_by_code(_code text)
+RETURNS TABLE(id uuid, full_name text, personal_code text)
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = public AS $$
+  SELECT id, full_name, personal_code
+  FROM public.personal_trainers
+  WHERE personal_code = _code
+$$;
+```
+
+**Arquivos a editar:**
+- `src/components/AddStudentModal.tsx` — passar `personal_name: personalName` no insert do convite.
+- `src/pages/StudentInviteSignup.tsx` — remover embed `personal_trainers(...)`; usar `invitation.personal_name` direto.
+- `src/pages/StudentSignup.tsx` — substituir o `select` direto em `personal_trainers` pelas RPCs `get_personal_public_info` e `get_personal_by_code`.
+
+Posso prosseguir com essas correções?

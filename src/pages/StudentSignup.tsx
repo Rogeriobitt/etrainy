@@ -55,13 +55,12 @@ const StudentSignup = () => {
   useEffect(() => {
     if (!refTrainerId) return;
     const validateRef = async () => {
-      const { data } = await supabase
-        .from("personal_trainers")
-        .select("full_name")
-        .eq("id", refTrainerId)
-        .maybeSingle();
-      if (data?.full_name) {
-        setRefTrainerName(data.full_name);
+      const { data } = await supabase.rpc("get_personal_public_info" as any, {
+        _personal_id: refTrainerId,
+      });
+      const trainer = (data as any)?.[0];
+      if (trainer?.full_name) {
+        setRefTrainerName(trainer.full_name);
       } else {
         setRefInvalid(true);
       }

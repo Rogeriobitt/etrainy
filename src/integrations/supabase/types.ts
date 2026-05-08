@@ -284,6 +284,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          personal_name: string | null
           personal_trainer_id: string
           status: string
           student_email: string
@@ -294,6 +295,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          personal_name?: string | null
           personal_trainer_id: string
           status?: string
           student_email: string
@@ -304,6 +306,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          personal_name?: string | null
           personal_trainer_id?: string
           status?: string
           student_email?: string
@@ -509,6 +512,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_personal_by_code: {
+        Args: { _code: string }
+        Returns: {
+          full_name: string
+          id: string
+          personal_code: string
+        }[]
+      }
+      get_personal_public_info: {
+        Args: { _personal_id: string }
+        Returns: {
+          full_name: string
+          id: string
+          personal_code: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
