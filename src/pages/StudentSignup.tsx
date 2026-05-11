@@ -50,9 +50,7 @@ const StudentSignup = () => {
 
 
 
-  // When invited via ?ref, skip step 4 (personal trainer code) entirely
-  const skipPersonalStep = !!refTrainerId && !refInvalid;
-  const totalVisibleSteps = skipPersonalStep ? TOTAL_STEPS - 1 : TOTAL_STEPS;
+  const totalVisibleSteps = TOTAL_STEPS;
 
   // Step 1
   const [fullName, setFullName] = useState("");
