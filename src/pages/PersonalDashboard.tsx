@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "@/components/Navbar";
-import { Users, Sparkles, ClipboardCheck, Loader2, Copy, Check, UserPlus, Link2 } from "lucide-react";
+import { Users, Sparkles, ClipboardCheck, Loader2, Copy, Check, UserPlus } from "lucide-react";
 import NotificationBell from "@/components/NotificationBell";
 import AddStudentModal from "@/components/AddStudentModal";
 import { useEffect, useState } from "react";
