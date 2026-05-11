@@ -47,26 +47,8 @@ const StudentSignup = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const refTrainerId = searchParams.get("ref");
-  const [refTrainerName, setRefTrainerName] = useState<string | null>(null);
-  const [refInvalid, setRefInvalid] = useState(false);
 
-  useEffect(() => {
-    if (!refTrainerId) return;
-    const validateRef = async () => {
-      const { data } = await supabase.rpc("get_personal_public_info" as any, {
-        _personal_id: refTrainerId,
-      });
-      const trainer = (data as any)?.[0];
-      if (trainer?.full_name) {
-        setRefTrainerName(trainer.full_name);
-      } else {
-        setRefInvalid(true);
-      }
-    };
-    validateRef();
-  }, [refTrainerId]);
+
 
   // When invited via ?ref, skip step 4 (personal trainer code) entirely
   const skipPersonalStep = !!refTrainerId && !refInvalid;
