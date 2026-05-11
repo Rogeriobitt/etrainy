@@ -44,13 +44,13 @@ const App = () => (
             <Route path="/profile" element={<Profile />} />
             <Route path="/treinos-preview" element={<TreinosPreview />} />
             <Route path="/dashboard/aluno" element={<StudentDashboard />} />
-            <Route path="/dashboard/personal" element={<PersonalDashboard />} />
+            <Route path="/dashboard/personal" element={<PersonalRoute><PersonalDashboard /></PersonalRoute>} />
             <Route path="/treinos/minha-serie" element={<MyWorkout />} />
             <Route path="/assistente/treino" element={<WorkoutAssistant />} />
-            <Route path="/assistente/treino/personal" element={<PersonalAssistant />} />
-            <Route path="/personal/alunos" element={<PersonalStudents />} />
-            <Route path="/personal/alunos/:studentId" element={<PersonalStudentDetail />} />
-            <Route path="/personal/pendencias" element={<PersonalPending />} />
+            <Route path="/assistente/treino/personal" element={<PersonalRoute><PersonalAssistant /></PersonalRoute>} />
+            <Route path="/personal/alunos" element={<PersonalRoute><PersonalStudents /></PersonalRoute>} />
+            <Route path="/personal/alunos/:studentId" element={<PersonalRoute><PersonalStudentDetail /></PersonalRoute>} />
+            <Route path="/personal/pendencias" element={<PersonalRoute><PersonalPending /></PersonalRoute>} />
             <Route path="/treinos/adaptar" element={<WorkoutAdapt />} />
             <Route path="/convite/:token" element={<StudentInviteSignup />} />
             <Route path="/treinos/historico" element={<NotFound />} />
