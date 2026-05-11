@@ -133,19 +133,10 @@ const StudentSignup = () => {
 
   const nextStep = () => {
     if (!validateStep()) return;
-    setStep((s) => {
-      let next = s + 1;
-      if (skipPersonalStep && next === 4) next = 5;
-      return Math.min(next, TOTAL_STEPS);
-    });
+    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   };
 
-  const prevStep = () =>
-    setStep((s) => {
-      let prev = s - 1;
-      if (skipPersonalStep && prev === 4) prev = 3;
-      return Math.max(prev, 1);
-    });
+  const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   const handleSubmit = async () => {
     setLoading(true);
