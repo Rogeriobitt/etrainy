@@ -170,7 +170,6 @@ const StudentSignup = () => {
       }
 
       // 3. Update profile with all data
-      const linkedByRef = skipPersonalStep && !!refTrainerId;
       await persistProfileAfterSignup(userId, {
         full_name: fullName,
         email,
@@ -184,9 +183,9 @@ const StudentSignup = () => {
         training_location: location,
         has_injury: hasInjury,
         injury_description: hasInjury ? injuryDesc : null,
-        has_personal: linkedByRef ? true : hasPersonal,
+        has_personal: hasPersonal,
         personal_code: hasPersonal ? personalCode : null,
-        personal_trainer_id: linkedByRef ? refTrainerId : null,
+        personal_trainer_id: null,
         avatar_url: avatarUrl,
       });
 
