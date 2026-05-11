@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { persistProfileAfterSignup } from "@/lib/persistProfileAfterSignup";
@@ -47,30 +47,10 @@ const StudentSignup = () => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const refTrainerId = searchParams.get("ref");
-  const [refTrainerName, setRefTrainerName] = useState<string | null>(null);
-  const [refInvalid, setRefInvalid] = useState(false);
 
-  useEffect(() => {
-    if (!refTrainerId) return;
-    const validateRef = async () => {
-      const { data } = await supabase.rpc("get_personal_public_info" as any, {
-        _personal_id: refTrainerId,
-      });
-      const trainer = (data as any)?.[0];
-      if (trainer?.full_name) {
-        setRefTrainerName(trainer.full_name);
-      } else {
-        setRefInvalid(true);
-      }
-    };
-    validateRef();
-  }, [refTrainerId]);
 
-  // When invited via ?ref, skip step 4 (personal trainer code) entirely
-  const skipPersonalStep = !!refTrainerId && !refInvalid;
-  const totalVisibleSteps = skipPersonalStep ? TOTAL_STEPS - 1 : TOTAL_STEPS;
+
+  const totalVisibleSteps = TOTAL_STEPS;
 
   // Step 1
   const [fullName, setFullName] = useState("");
@@ -153,19 +133,10 @@ const StudentSignup = () => {
 
   const nextStep = () => {
     if (!validateStep()) return;
-    setStep((s) => {
-      let next = s + 1;
-      if (skipPersonalStep && next === 4) next = 5;
-      return Math.min(next, TOTAL_STEPS);
-    });
+    setStep((s) => Math.min(s + 1, TOTAL_STEPS));
   };
 
-  const prevStep = () =>
-    setStep((s) => {
-      let prev = s - 1;
-      if (skipPersonalStep && prev === 4) prev = 3;
-      return Math.max(prev, 1);
-    });
+  const prevStep = () => setStep((s) => Math.max(s - 1, 1));
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -199,7 +170,6 @@ const StudentSignup = () => {
       }
 
       // 3. Update profile with all data
-      const linkedByRef = skipPersonalStep && !!refTrainerId;
       await persistProfileAfterSignup(userId, {
         full_name: fullName,
         email,
@@ -213,9 +183,9 @@ const StudentSignup = () => {
         training_location: location,
         has_injury: hasInjury,
         injury_description: hasInjury ? injuryDesc : null,
-        has_personal: linkedByRef ? true : hasPersonal,
+        has_personal: hasPersonal,
         personal_code: hasPersonal ? personalCode : null,
-        personal_trainer_id: linkedByRef ? refTrainerId : null,
+        personal_trainer_id: null,
         avatar_url: avatarUrl,
       });
 
@@ -487,36 +457,19 @@ const StudentSignup = () => {
           <p className="text-muted-foreground text-sm">Cadastro de Aluno</p>
         </div>
 
-        {refTrainerName && !refInvalid && (
-          <div className="bg-primary/10 border border-primary/30 rounded-lg px-4 py-3 mb-6 text-center">
-            <p className="text-xs text-muted-foreground">Você foi convidado pelo professor</p>
-            <p className="text-sm font-semibold text-primary">{refTrainerName}</p>
-          </div>
-        )}
-        {refInvalid && (
-          <div className="bg-destructive/10 border border-destructive/30 rounded-lg px-4 py-3 mb-6 text-center">
-            <p className="text-xs text-destructive">
-              Link de convite inválido. Você pode continuar o cadastro normalmente.
-            </p>
-          </div>
-        )}
-
         {/* Progress bar */}
         <div className="flex items-center gap-1 mb-8">
-          {Array.from({ length: totalVisibleSteps }).map((_, i) => {
-            const visibleIndex = skipPersonalStep && step >= 5 ? step - 1 : step;
-            return (
-              <div
-                key={i}
-                className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                  i < visibleIndex ? "bg-primary" : "bg-secondary"
-                }`}
-              />
-            );
-          })}
+          {Array.from({ length: totalVisibleSteps }).map((_, i) => (
+            <div
+              key={i}
+              className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
+                i < step ? "bg-primary" : "bg-secondary"
+              }`}
+            />
+          ))}
         </div>
         <p className="text-xs text-muted-foreground text-center mb-6">
-          Etapa {skipPersonalStep && step >= 5 ? step - 1 : step} de {totalVisibleSteps}
+          Etapa {step} de {totalVisibleSteps}
         </p>
 
         {/* Step content */}
