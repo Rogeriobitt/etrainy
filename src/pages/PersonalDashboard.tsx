@@ -67,16 +67,8 @@ const PersonalDashboard = () => {
     }
   };
 
-  const inviteLink = personal?.id
-    ? `${window.location.origin}/cadastro/aluno?ref=${personal.id}`
-    : "";
 
-  const handleCopyLink = () => {
-    if (!inviteLink) return;
-    navigator.clipboard.writeText(inviteLink);
-    setLinkCopied(true);
-    setTimeout(() => setLinkCopied(false), 2000);
-  };
+
 
   if (loading || personalLoading) {
     return (
