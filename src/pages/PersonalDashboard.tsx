@@ -113,30 +113,7 @@ const PersonalDashboard = () => {
           Adicionar aluno
         </button>
 
-        {/* Convite por link genérico */}
-        {personal?.id && (
-          <div className="bg-card border border-border rounded-xl p-5 mb-8">
-            <div className="flex items-center gap-2 mb-2">
-              <Link2 className="w-4 h-4 text-primary" />
-              <h3 className="font-heading tracking-wider text-sm">CONVIDAR ALUNOS</h3>
-            </div>
-            <p className="text-xs text-muted-foreground mb-3">
-              Compartilhe este link. Quem se cadastrar por ele será automaticamente vinculado a você.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1 bg-secondary border border-border rounded-lg px-3 py-2.5 text-xs text-muted-foreground break-all select-all">
-                {inviteLink}
-              </div>
-              <button
-                onClick={handleCopyLink}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg gradient-accent text-primary-foreground text-sm font-semibold hover:opacity-90 transition-opacity whitespace-nowrap"
-              >
-                {linkCopied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                {linkCopied ? "Copiado!" : "Copiar link"}
-              </button>
-            </div>
-          </div>
-        )}
+
 
         {personal && (
           <AddStudentModal
