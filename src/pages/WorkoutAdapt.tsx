@@ -212,6 +212,9 @@ const WorkoutAdapt = () => {
       if (!selectedPlan) throw new Error("Plan not found");
 
       // Create adapted workout plan
+      const expiresAt = new Date();
+      expiresAt.setMonth(expiresAt.getMonth() + 1);
+
       const { data: newPlan, error: planErr } = await supabase
         .from("workout_plans")
         .insert({
@@ -223,7 +226,9 @@ const WorkoutAdapt = () => {
           training_location: mode === "bodyweight" ? "home_bodyweight" : mode === "freeweights" ? "home_weights" : "limited",
           status: "ativa",
           personal_trainer_id: null,
-        })
+          validity_months: 1,
+          expires_at: expiresAt.toISOString(),
+        } as any)
         .select()
         .single();
 
