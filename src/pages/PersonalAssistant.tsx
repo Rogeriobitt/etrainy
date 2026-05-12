@@ -97,6 +97,7 @@ const PersonalAssistant = () => {
           training_location: location,
           status: "aguardando_revisao_personal",
           personal_trainer_id: personal.id,
+          validity_months: validityMonths,
         })
         .select()
         .single();
