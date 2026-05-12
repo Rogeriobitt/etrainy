@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { notifyAlunoSerieAprovada, notifyAlunoSerieEditada } from "@/lib/notifications";
 import { ExerciseEditor, type EditableExercise } from "@/components/ExerciseEditor";
+import { computeExpiresAt, getValidityInfo, VALIDITY_OPTIONS } from "@/lib/workoutValidity";
 
 const OBJECTIVES: Record<string, string> = {
   hypertrophy: "Hipertrofia",
@@ -39,6 +40,7 @@ const PersonalStudentDetail = () => {
   const [editedExercises, setEditedExercises] = useState<Record<string, EditableExercise[]>>({});
   const [saving, setSaving] = useState(false);
   const [approving, setApproving] = useState(false);
+  const [validityMonths, setValidityMonths] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
@@ -73,6 +75,12 @@ const PersonalStudentDetail = () => {
     },
     enabled: !!studentId,
   });
+
+  useEffect(() => {
+    if (plan && (plan as any).validity_months) {
+      setValidityMonths((plan as any).validity_months as 1 | 2 | 3);
+    }
+  }, [plan]);
 
   const { data: days, isLoading: daysLoading } = useQuery({
     queryKey: ["student-days", plan?.id],
@@ -216,7 +224,13 @@ const PersonalStudentDetail = () => {
     setApproving(true);
     try {
       await handleSave();
-      await supabase.from("workout_plans").update({ status: "ativa" }).eq("id", plan.id);
+      await supabase.from("workout_plans").update({
+        status: "ativa",
+        validity_months: validityMonths,
+        expires_at: computeExpiresAt(validityMonths),
+        expiry_warning_sent_at: null,
+        expired_notified_at: null,
+      } as any).eq("id", plan.id);
       toast({ title: "Série aprovada e enviada para o aluno!" });
       queryClient.invalidateQueries({ queryKey: ["student-plan"] });
 
@@ -299,6 +313,37 @@ const PersonalStudentDetail = () => {
               <span className={`font-medium ${plan.status === "ativa" ? "text-green-400" : "text-yellow-400"}`}>
                 ● {plan.status === "ativa" ? "Aprovada" : "Aguardando revisão"}
               </span>
+              {(() => {
+                const info = getValidityInfo((plan as any).expires_at);
+                return info ? (
+                  <span className={`font-medium ${info.color}`}>● {info.label}</span>
+                ) : null;
+              })()}
+            </div>
+
+            {/* Validity selector */}
+            <div className="bg-card border border-border rounded-xl p-4 mb-6">
+              <p className="text-sm font-medium mb-2">
+                Validade da série {plan.status === "ativa" ? "(reaplicada ao aprovar novamente)" : ""}
+              </p>
+              <div className="flex gap-3">
+                {VALIDITY_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setValidityMonths(opt.value as 1 | 2 | 3)}
+                    className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      validityMonths === opt.value
+                        ? "gradient-accent text-primary-foreground"
+                        : "bg-secondary border border-border hover:border-primary/40"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Ao aprovar, a série ficará válida por {validityMonths} {validityMonths === 1 ? "mês" : "meses"} a partir de hoje. Você e o aluno serão avisados 7 dias antes do vencimento.
+              </p>
             </div>
 
             {/* Tabs */}

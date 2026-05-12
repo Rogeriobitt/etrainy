@@ -8,6 +8,7 @@ import { ArrowLeft, Sparkles, Loader2, CheckCircle2, Info, RefreshCw, Pencil, Pl
 import { evolveWorkoutPlan } from "@/lib/workoutEvolution";
 import { toast } from "@/hooks/use-toast";
 import { ExerciseEditor, type EditableExercise } from "@/components/ExerciseEditor";
+import { getValidityInfo } from "@/lib/workoutValidity";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   ativa: { label: "Ativa", color: "text-green-400" },
@@ -281,6 +282,12 @@ const MyWorkout = () => {
               <span><span className="text-muted-foreground">Divisão:</span> {plan.division}</span>
               <span><span className="text-muted-foreground">Dias:</span> {plan.days_per_week}x/semana</span>
               {statusInfo && <span className={`font-medium ${statusInfo.color}`}>● {statusInfo.label}</span>}
+              {(() => {
+                const info = getValidityInfo((plan as any).expires_at);
+                return info ? (
+                  <span className={`font-medium ${info.color}`}>● {info.label}</span>
+                ) : null;
+              })()}
             </div>
 
             {/* Action buttons */}

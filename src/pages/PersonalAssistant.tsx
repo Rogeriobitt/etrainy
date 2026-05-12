@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Loader2, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
 import { selectExercisesForDay } from "@/lib/exerciseSelector";
+import { computeExpiresAt, VALIDITY_OPTIONS } from "@/lib/workoutValidity";
 
 const DIVISION_MAP: Record<number, { division: string; description: string; workouts: { name: string; muscles: string }[] }> = {
   2: { division: "A/B", description: "Divisão sugerida: A/B (superior/inferior).", workouts: [{ name: "Treino A", muscles: "Peito + Costas + Ombros" }, { name: "Treino B", muscles: "Pernas + Bíceps + Tríceps" }] },
@@ -35,6 +36,7 @@ const PersonalAssistant = () => {
   const [hasInjury, setHasInjury] = useState(false);
   const [injury, setInjury] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [validityMonths, setValidityMonths] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
@@ -95,6 +97,7 @@ const PersonalAssistant = () => {
           training_location: location,
           status: "aguardando_revisao_personal",
           personal_trainer_id: personal.id,
+          validity_months: validityMonths,
         })
         .select()
         .single();
@@ -274,6 +277,27 @@ const PersonalAssistant = () => {
                     </div>
                   ))}
                 </div>
+              </div>
+              <div className="bg-card border border-border rounded-xl p-5 mb-6">
+                <p className="text-sm font-medium mb-3">Validade da série</p>
+                <div className="flex gap-3">
+                  {VALIDITY_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setValidityMonths(opt.value as 1 | 2 | 3)}
+                      className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                        validityMonths === opt.value
+                          ? "gradient-accent text-primary-foreground"
+                          : "bg-secondary border border-border hover:border-primary/40"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Ao aprovar a série, ela ficará válida por {validityMonths} {validityMonths === 1 ? "mês" : "meses"}. O aluno e você receberão um aviso 7 dias antes do vencimento.
+                </p>
               </div>
               <div className="flex items-start gap-3 bg-primary/10 border border-primary/20 rounded-xl p-4 mb-8">
                 <AlertTriangle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
