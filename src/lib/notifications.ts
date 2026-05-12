@@ -73,3 +73,55 @@ export async function notifyAlunoSerieEditada(
     link: "/treinos/minha-serie",
   });
 }
+
+export async function notifySeriePrestesAVencerAluno(
+  alunoUserId: string,
+  diasRestantes: number
+) {
+  await createNotification({
+    userId: alunoUserId,
+    type: "serie_prestes_a_vencer",
+    title: "Sua série está prestes a vencer",
+    message: `Sua série de treino vence em ${diasRestantes} dia(s). Em breve seu personal vai criar uma nova série para você.`,
+    link: "/treinos/minha-serie",
+  });
+}
+
+export async function notifySeriePrestesAVencerPersonal(
+  personalUserId: string,
+  alunoName: string,
+  alunoUserId: string,
+  diasRestantes: number
+) {
+  await createNotification({
+    userId: personalUserId,
+    type: "serie_prestes_a_vencer_aluno",
+    title: "Série de aluno prestes a vencer",
+    message: `A série do aluno ${alunoName} vence em ${diasRestantes} dia(s). Hora de planejar a próxima.`,
+    link: `/personal/alunos/${alunoUserId}`,
+  });
+}
+
+export async function notifySerieVencidaAluno(alunoUserId: string) {
+  await createNotification({
+    userId: alunoUserId,
+    type: "serie_vencida",
+    title: "Sua série venceu",
+    message: "Sua série de treino chegou ao fim. Aguarde seu personal criar uma nova série atualizada.",
+    link: "/treinos/minha-serie",
+  });
+}
+
+export async function notifySerieVencidaPersonal(
+  personalUserId: string,
+  alunoName: string,
+  alunoUserId: string
+) {
+  await createNotification({
+    userId: personalUserId,
+    type: "serie_vencida_aluno",
+    title: "Série de aluno venceu",
+    message: `A série do aluno ${alunoName} venceu hoje. Crie uma nova série para manter a evolução.`,
+    link: `/personal/alunos/${alunoUserId}`,
+  });
+}
