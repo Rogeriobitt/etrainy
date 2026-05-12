@@ -40,6 +40,7 @@ const PersonalStudentDetail = () => {
   const [editedExercises, setEditedExercises] = useState<Record<string, EditableExercise[]>>({});
   const [saving, setSaving] = useState(false);
   const [approving, setApproving] = useState(false);
+  const [validityMonths, setValidityMonths] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
