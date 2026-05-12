@@ -8,6 +8,7 @@ import { ArrowLeft, Sparkles, Loader2, CheckCircle2, Info, RefreshCw, Pencil, Pl
 import { evolveWorkoutPlan } from "@/lib/workoutEvolution";
 import { toast } from "@/hooks/use-toast";
 import { ExerciseEditor, type EditableExercise } from "@/components/ExerciseEditor";
+import { getValidityInfo } from "@/lib/workoutValidity";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   ativa: { label: "Ativa", color: "text-green-400" },
