@@ -62,8 +62,25 @@ const PersonalStudents = () => {
         if (!latestPlan[p.user_id]) latestPlan[p.user_id] = p.status;
       });
 
+      // Fallback: pegar nome do convite caso o profile esteja sem nome
+      const { data: invitations } = await supabase
+        .from("student_invitations" as any)
+        .select("student_name, student_email")
+        .eq("personal_trainer_id", personal!.id);
+
+      const inviteByEmail: Record<string, string> = {};
+      (invitations as any[] | null)?.forEach((i) => {
+        if (i.student_email && i.student_name) {
+          inviteByEmail[i.student_email.toLowerCase()] = i.student_name;
+        }
+      });
+
       return profiles.map((p) => ({
         ...p,
+        full_name:
+          p.full_name ||
+          (p.email ? inviteByEmail[p.email.toLowerCase()] : null) ||
+          null,
         planStatus: latestPlan[p.user_id] || null,
       }));
     },
