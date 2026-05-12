@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { notifyAlunoSerieAprovada, notifyAlunoSerieEditada } from "@/lib/notifications";
 import { ExerciseEditor, type EditableExercise } from "@/components/ExerciseEditor";
+import { computeExpiresAt, getValidityInfo, VALIDITY_OPTIONS } from "@/lib/workoutValidity";
 
 const OBJECTIVES: Record<string, string> = {
   hypertrophy: "Hipertrofia",
