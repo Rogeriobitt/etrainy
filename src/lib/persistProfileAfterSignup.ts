@@ -42,15 +42,20 @@ export const persistProfileAfterSignup = async (
         .eq("user_id", userId);
 
       if (!updateError) {
-        // Verify critical fields landed (especially personal_trainer_id)
-        if ("personal_trainer_id" in updates && updates.personal_trainer_id) {
+        const criticalFields = ["personal_trainer_id", "full_name"].filter(
+          (f) => f in updates && (updates as any)[f]
+        );
+        if (criticalFields.length > 0) {
           const { data: verify } = await supabase
             .from("profiles")
-            .select("personal_trainer_id")
+            .select(criticalFields.join(", "))
             .eq("user_id", userId)
             .maybeSingle();
-          if (verify?.personal_trainer_id === updates.personal_trainer_id) return;
-          lastError = new Error("personal_trainer_id não persistido (RLS ou sessão).");
+          const ok = criticalFields.every(
+            (f) => (verify as any)?.[f] === (updates as any)[f]
+          );
+          if (ok) return;
+          lastError = new Error("Campos críticos não persistidos (RLS ou sessão).");
         } else {
           return;
         }
