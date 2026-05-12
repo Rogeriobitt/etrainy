@@ -171,6 +171,11 @@ export async function evolveWorkoutPlan(
     .eq("id", currentPlanId);
 
   // 6. Create new plan
+  const validityMonths = (plan as any).validity_months || 1;
+  const expiresAt = newStatus === "ativa"
+    ? new Date(new Date().setMonth(new Date().getMonth() + validityMonths)).toISOString()
+    : null;
+
   const { data: newPlan, error: newPlanErr } = await supabase
     .from("workout_plans")
     .insert({
@@ -182,7 +187,9 @@ export async function evolveWorkoutPlan(
       training_location: plan.training_location,
       personal_trainer_id: plan.personal_trainer_id,
       status: newStatus,
-    })
+      validity_months: validityMonths,
+      expires_at: expiresAt,
+    } as any)
     .select()
     .single();
 
