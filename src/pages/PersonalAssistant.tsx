@@ -278,6 +278,27 @@ const PersonalAssistant = () => {
                   ))}
                 </div>
               </div>
+              <div className="bg-card border border-border rounded-xl p-5 mb-6">
+                <p className="text-sm font-medium mb-3">Validade da série</p>
+                <div className="flex gap-3">
+                  {VALIDITY_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setValidityMonths(opt.value as 1 | 2 | 3)}
+                      className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                        validityMonths === opt.value
+                          ? "gradient-accent text-primary-foreground"
+                          : "bg-secondary border border-border hover:border-primary/40"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Ao aprovar a série, ela ficará válida por {validityMonths} {validityMonths === 1 ? "mês" : "meses"}. O aluno e você receberão um aviso 7 dias antes do vencimento.
+                </p>
+              </div>
               <div className="flex items-start gap-3 bg-primary/10 border border-primary/20 rounded-xl p-4 mb-8">
                 <AlertTriangle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <p className="text-sm text-muted-foreground">A série será criada com status "Aguardando revisão". Você poderá editar os exercícios antes de aprovar e enviar para o aluno.</p>
