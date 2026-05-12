@@ -36,6 +36,7 @@ const PersonalAssistant = () => {
   const [hasInjury, setHasInjury] = useState(false);
   const [injury, setInjury] = useState("");
   const [generating, setGenerating] = useState(false);
+  const [validityMonths, setValidityMonths] = useState<1 | 2 | 3>(1);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
