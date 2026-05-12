@@ -313,6 +313,37 @@ const PersonalStudentDetail = () => {
               <span className={`font-medium ${plan.status === "ativa" ? "text-green-400" : "text-yellow-400"}`}>
                 ● {plan.status === "ativa" ? "Aprovada" : "Aguardando revisão"}
               </span>
+              {(() => {
+                const info = getValidityInfo((plan as any).expires_at);
+                return info ? (
+                  <span className={`font-medium ${info.color}`}>● {info.label}</span>
+                ) : null;
+              })()}
+            </div>
+
+            {/* Validity selector */}
+            <div className="bg-card border border-border rounded-xl p-4 mb-6">
+              <p className="text-sm font-medium mb-2">
+                Validade da série {plan.status === "ativa" ? "(reaplicada ao aprovar novamente)" : ""}
+              </p>
+              <div className="flex gap-3">
+                {VALIDITY_OPTIONS.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setValidityMonths(opt.value as 1 | 2 | 3)}
+                    className={`flex-1 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      validityMonths === opt.value
+                        ? "gradient-accent text-primary-foreground"
+                        : "bg-secondary border border-border hover:border-primary/40"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                Ao aprovar, a série ficará válida por {validityMonths} {validityMonths === 1 ? "mês" : "meses"} a partir de hoje. Você e o aluno serão avisados 7 dias antes do vencimento.
+              </p>
             </div>
 
             {/* Tabs */}
