@@ -462,6 +462,9 @@ export type Database = {
           created_at: string
           days_per_week: number
           division: string
+          expired_notified_at: string | null
+          expires_at: string | null
+          expiry_warning_sent_at: string | null
           id: string
           level: string
           objective: string
@@ -470,11 +473,15 @@ export type Database = {
           training_location: string | null
           updated_at: string
           user_id: string
+          validity_months: number
         }
         Insert: {
           created_at?: string
           days_per_week: number
           division: string
+          expired_notified_at?: string | null
+          expires_at?: string | null
+          expiry_warning_sent_at?: string | null
           id?: string
           level: string
           objective: string
@@ -483,11 +490,15 @@ export type Database = {
           training_location?: string | null
           updated_at?: string
           user_id: string
+          validity_months?: number
         }
         Update: {
           created_at?: string
           days_per_week?: number
           division?: string
+          expired_notified_at?: string | null
+          expires_at?: string | null
+          expiry_warning_sent_at?: string | null
           id?: string
           level?: string
           objective?: string
@@ -496,6 +507,7 @@ export type Database = {
           training_location?: string | null
           updated_at?: string
           user_id?: string
+          validity_months?: number
         }
         Relationships: [
           {
