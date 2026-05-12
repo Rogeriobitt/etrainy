@@ -224,7 +224,13 @@ const PersonalStudentDetail = () => {
     setApproving(true);
     try {
       await handleSave();
-      await supabase.from("workout_plans").update({ status: "ativa" }).eq("id", plan.id);
+      await supabase.from("workout_plans").update({
+        status: "ativa",
+        validity_months: validityMonths,
+        expires_at: computeExpiresAt(validityMonths),
+        expiry_warning_sent_at: null,
+        expired_notified_at: null,
+      } as any).eq("id", plan.id);
       toast({ title: "Série aprovada e enviada para o aluno!" });
       queryClient.invalidateQueries({ queryKey: ["student-plan"] });
 
