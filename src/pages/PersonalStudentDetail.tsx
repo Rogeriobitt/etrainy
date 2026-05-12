@@ -76,6 +76,12 @@ const PersonalStudentDetail = () => {
     enabled: !!studentId,
   });
 
+  useEffect(() => {
+    if (plan && (plan as any).validity_months) {
+      setValidityMonths((plan as any).validity_months as 1 | 2 | 3);
+    }
+  }, [plan]);
+
   const { data: days, isLoading: daysLoading } = useQuery({
     queryKey: ["student-days", plan?.id],
     queryFn: async () => {
