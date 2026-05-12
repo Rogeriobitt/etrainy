@@ -282,6 +282,12 @@ const MyWorkout = () => {
               <span><span className="text-muted-foreground">Divisão:</span> {plan.division}</span>
               <span><span className="text-muted-foreground">Dias:</span> {plan.days_per_week}x/semana</span>
               {statusInfo && <span className={`font-medium ${statusInfo.color}`}>● {statusInfo.label}</span>}
+              {(() => {
+                const info = getValidityInfo((plan as any).expires_at);
+                return info ? (
+                  <span className={`font-medium ${info.color}`}>● {info.label}</span>
+                ) : null;
+              })()}
             </div>
 
             {/* Action buttons */}
