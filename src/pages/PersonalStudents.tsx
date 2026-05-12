@@ -127,8 +127,8 @@ const PersonalStudents = () => {
             {students.map((s) => {
               const badge = getStatusBadge(s.planStatus);
               return (
-                <div key={s.id} className="bg-card border border-border rounded-xl p-4 sm:p-5">
-                  <div className="flex items-start gap-3 sm:gap-4">
+                <div key={s.id} className="bg-card border border-border rounded-xl p-4 sm:p-5 sm:flex sm:items-center sm:gap-4">
+                  <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">
                     <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center shrink-0 overflow-hidden">
                       {s.avatar_url ? (
                         <img src={s.avatar_url} alt={s.full_name || ""} className="w-full h-full object-cover" />
