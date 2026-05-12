@@ -127,33 +127,38 @@ const PersonalStudents = () => {
             {students.map((s) => {
               const badge = getStatusBadge(s.planStatus);
               return (
-                <div key={s.id} className="bg-card border border-border rounded-xl p-5 flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center shrink-0 overflow-hidden">
-                    {s.avatar_url ? (
-                      <img src={s.avatar_url} alt={s.full_name || ""} className="w-full h-full object-cover" />
-                    ) : (
-                      <User className="w-6 h-6 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold truncate">{s.full_name || "Aluno"}</p>
-                    {s.email && (
-                      <p className="text-xs text-muted-foreground truncate">{s.email}</p>
-                    )}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-1">
-                      {s.goal && <span>{OBJECTIVES[s.goal] || s.goal}</span>}
-                      {s.experience_level && <span>{LEVELS[s.experience_level] || s.experience_level}</span>}
+                <div key={s.id} className="bg-card border border-border rounded-xl p-4 sm:p-5 sm:flex sm:items-center sm:gap-4">
+                  <div className="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">
+                    <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center shrink-0 overflow-hidden">
+                      {s.avatar_url ? (
+                        <img src={s.avatar_url} alt={s.full_name || ""} className="w-full h-full object-cover" />
+                      ) : (
+                        <User className="w-6 h-6 text-muted-foreground" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-base leading-tight break-words">{s.full_name || "Aluno sem nome"}</p>
+                      {s.email && (
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">{s.email}</p>
+                      )}
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-2">
+                        {s.goal && <span>{OBJECTIVES[s.goal] || s.goal}</span>}
+                        {s.experience_level && <span>{LEVELS[s.experience_level] || s.experience_level}</span>}
+                      </div>
                     </div>
                   </div>
-                  <span className={`text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap ${badge.cls}`}>
-                    {badge.label}
-                  </span>
-                  <button
-                    onClick={() => navigate(`/personal/alunos/${s.user_id}`)}
-                    className="gradient-accent px-4 py-2 rounded-lg font-semibold text-primary-foreground text-xs hover:opacity-90 transition-opacity whitespace-nowrap flex items-center gap-1.5"
-                  >
-                    <Dumbbell className="w-3.5 h-3.5" /> Ver Perfil e Série
-                  </button>
+
+                  <div className="mt-4 flex flex-col gap-3 sm:mt-0 sm:flex-row sm:items-center sm:justify-end">
+                    <span className={`w-fit text-xs font-medium px-2.5 py-1 rounded-full whitespace-nowrap ${badge.cls}`}>
+                      {badge.label}
+                    </span>
+                    <button
+                      onClick={() => navigate(`/personal/alunos/${s.user_id}`)}
+                      className="gradient-accent w-full sm:w-auto justify-center px-4 py-2 rounded-lg font-semibold text-primary-foreground text-xs hover:opacity-90 transition-opacity whitespace-nowrap flex items-center gap-1.5"
+                    >
+                      <Dumbbell className="w-3.5 h-3.5" /> Ver Perfil e Série
+                    </button>
+                  </div>
                 </div>
               );
             })}
