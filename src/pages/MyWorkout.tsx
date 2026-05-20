@@ -421,7 +421,9 @@ const MyWorkout = () => {
                     </>
                   ) : (
                     <div className="divide-y divide-border">
-                      {currentDay.exercises.map((ex) => (
+                      {currentDay.exercises.map((ex) => {
+                        const img = lookupExerciseImage(exerciseImages, ex.exercise_name, (ex as any).image_url);
+                        return (
                         <div key={ex.id} className="px-4 py-3 flex items-center gap-3">
                           <button
                             onClick={() => setChecked((prev) => ({ ...prev, [ex.id]: !prev[ex.id] }))}
@@ -429,13 +431,21 @@ const MyWorkout = () => {
                           >
                             {checked[ex.id] && <CheckCircle2 className="w-4 h-4 text-primary-foreground" />}
                           </button>
+                          <div className="w-14 h-14 rounded-lg bg-secondary border border-border flex items-center justify-center shrink-0 overflow-hidden">
+                            {img ? (
+                              <img src={img} alt={ex.exercise_name} className="w-full h-full object-cover" loading="lazy" />
+                            ) : (
+                              <Dumbbell className="w-5 h-5 text-muted-foreground" />
+                            )}
+                          </div>
                           <div className="flex-1 min-w-0">
                             <p className={`text-sm font-medium ${checked[ex.id] ? "line-through text-muted-foreground" : ""}`}>{ex.exercise_name}</p>
                             {ex.notes && <p className="text-xs text-muted-foreground mt-0.5">{ex.notes}</p>}
                           </div>
                           <span className="text-sm text-primary font-semibold whitespace-nowrap">{ex.sets} × {ex.reps}</span>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
