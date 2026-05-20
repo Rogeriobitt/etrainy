@@ -39,6 +39,8 @@ const ExerciseEditor = ({ exercise, exerciseId, dayId, onUpdate, onRemove }: Exe
   const [muscleGroups, setMuscleGroups] = useState<string[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string>(ALL_GROUPS);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const { data: exerciseImages } = useExerciseImages();
+  const displayImage = lookupExerciseImage(exerciseImages, exercise.exercise_name, exercise.image_url);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
