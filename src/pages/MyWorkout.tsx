@@ -35,6 +35,7 @@ const MyWorkout = () => {
   const [checked, setChecked] = useState<Record<string, boolean>>({});
   const [showDivision, setShowDivision] = useState(false);
   const [evolving, setEvolving] = useState(false);
+  const { data: exerciseImages } = useExerciseImages();
 
   // Edit mode state (personal trainer only)
   const [isPersonal, setIsPersonal] = useState(false);
