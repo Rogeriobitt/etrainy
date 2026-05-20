@@ -70,6 +70,7 @@ export type Database = {
           created_at: string
           equipment_type: string
           id: string
+          image_url: string | null
           muscle_group: string
           name: string
           notes: string | null
@@ -80,6 +81,7 @@ export type Database = {
           created_at?: string
           equipment_type: string
           id?: string
+          image_url?: string | null
           muscle_group: string
           name: string
           notes?: string | null
@@ -90,6 +92,7 @@ export type Database = {
           created_at?: string
           equipment_type?: string
           id?: string
+          image_url?: string | null
           muscle_group?: string
           name?: string
           notes?: string | null
