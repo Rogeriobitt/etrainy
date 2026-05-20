@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import StudentSignup from "./pages/StudentSignup";
 import PersonalSignup from "./pages/PersonalSignup";
 import AdminClasses from "./pages/AdminClasses";
+import AdminExercises from "./pages/AdminExercises";
 import ClassPlayer from "./pages/ClassPlayer";
 import Profile from "./pages/Profile";
 import TreinosPreview from "./pages/TreinosPreview";
