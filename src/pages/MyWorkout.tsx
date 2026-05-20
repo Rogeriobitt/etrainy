@@ -9,6 +9,8 @@ import { evolveWorkoutPlan } from "@/lib/workoutEvolution";
 import { toast } from "@/hooks/use-toast";
 import { ExerciseEditor, type EditableExercise } from "@/components/ExerciseEditor";
 import { getValidityInfo } from "@/lib/workoutValidity";
+import { useExerciseImages, lookupExerciseImage } from "@/hooks/useExerciseImages";
+import { Dumbbell } from "lucide-react";
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   ativa: { label: "Ativa", color: "text-green-400" },
