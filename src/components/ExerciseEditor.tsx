@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Trash2, Dumbbell, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useExerciseImages, lookupExerciseImage } from "@/hooks/useExerciseImages";
 
 interface EditableExercise {
   id: string;
