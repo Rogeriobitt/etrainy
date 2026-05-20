@@ -41,6 +41,7 @@ const App = () => (
             <Route path="/cadastro/aluno" element={<StudentSignup />} />
             <Route path="/cadastro/personal" element={<PersonalSignup />} />
             <Route path="/admin/classes" element={<AdminClasses />} />
+            <Route path="/admin/exercises" element={<AdminExercises />} />
             <Route path="/class/:id" element={<ClassPlayer />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/treinos-preview" element={<TreinosPreview />} />
