@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Trash2, Dumbbell, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useExerciseImages, lookupExerciseImage } from "@/hooks/useExerciseImages";
 
 interface EditableExercise {
   id: string;
@@ -38,6 +39,8 @@ const ExerciseEditor = ({ exercise, exerciseId, dayId, onUpdate, onRemove }: Exe
   const [muscleGroups, setMuscleGroups] = useState<string[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string>(ALL_GROUPS);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const { data: exerciseImages } = useExerciseImages();
+  const displayImage = lookupExerciseImage(exerciseImages, exercise.exercise_name, exercise.image_url);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -102,8 +105,8 @@ const ExerciseEditor = ({ exercise, exerciseId, dayId, onUpdate, onRemove }: Exe
       <div className="flex items-start gap-3">
         {/* Thumbnail */}
         <div className="w-14 h-14 rounded-lg bg-secondary border border-border flex items-center justify-center shrink-0 overflow-hidden">
-          {exercise.image_url ? (
-            <img src={exercise.image_url} alt={exercise.exercise_name} className="w-full h-full object-cover" />
+          {displayImage ? (
+            <img src={displayImage} alt={exercise.exercise_name} className="w-full h-full object-cover" loading="lazy" />
           ) : (
             <Dumbbell className="w-6 h-6 text-muted-foreground" />
           )}

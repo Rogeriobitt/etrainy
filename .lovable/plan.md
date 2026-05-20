@@ -1,40 +1,38 @@
-# Validade da série de treino
+## Imagem dos exercícios na série do aluno
 
-Sim, é totalmente possível. Plano abaixo.
+### Como vai funcionar
+- O admin cadastra **uma imagem por exercício** no catálogo (página `/admin/...`).
+- Sempre que esse exercício aparecer em qualquer série (do aluno ou montada pelo personal), a imagem aparece automaticamente ao lado do nome, séries e reps.
+- Aluno e personal veem a mesma imagem — sem retrabalho por aluno.
 
-## O que muda para o usuário
+### Mudanças
 
-- Toda série criada (pela IA ou manual pelo personal) passa a ter uma **data de validade**.
-- Padrão: **30 dias** a partir da criação/aprovação.
-- Na hora de criar/aprovar a série, o personal escolhe entre **1 mês**, **2 meses** ou **3 meses** (1 mês selecionado por padrão).
-- Avisos automáticos:
-  - **7 dias antes** de vencer: notifica aluno e personal ("Série prestes a vencer, hora de renovar").
-  - **No vencimento**: notifica aluno e personal ("Série vencida, criar nova série").
-- Na tela do aluno (Minha Série) e na tela do personal (detalhe do aluno), exibir badge com **"Vence em X dias"** ou **"Vencida"**.
+**1. Banco de dados**
+- Adicionar coluna `image_url` (text, nullable) na tabela `exercises`.
+- Criar bucket público `exercise-images` no Lovable Cloud Storage com policies:
+  - Leitura pública (qualquer um vê a imagem).
+  - Upload/Update/Delete apenas para admins (`has_role(auth.uid(),'admin')`).
 
-## Mudanças técnicas
+**2. Painel admin de exercícios**
+- Tela de gestão do catálogo de exercícios (criar se ainda não existir, ou estender a existente) com:
+  - Listagem dos exercícios + thumbnail.
+  - Botão "Enviar imagem" em cada linha → upload do arquivo para `exercise-images/{exercise_id}.{ext}` → salva URL pública em `exercises.image_url`.
+  - Botão "Remover imagem".
+- Aceita JPG/PNG/WEBP/GIF até ~5 MB.
 
-### Banco
-- `workout_plans`: adicionar colunas
-  - `validity_months` int (1, 2 ou 3 — default 1)
-  - `expires_at` timestamptz (calculada na criação/aprovação)
-  - `expiry_warning_sent_at` timestamptz (para não duplicar notificação de aviso)
-  - `expired_notified_at` timestamptz (para não duplicar notificação de vencimento)
-- Índice em `expires_at` para o cron.
+**3. Exibição na série**
+- **Aluno (`MyWorkout.tsx`)**: ao listar exercícios do dia, fazer um lookup por nome em `exercises` (ou trazer via join) e renderizar a thumbnail (64×64, arredondada) à esquerda do nome. Fallback: ícone de halteres atual.
+- **Personal (`PersonalStudentDetail.tsx` + `ExerciseEditor.tsx`)**: mesma thumbnail no lugar do ícone Dumbbell já existente (o componente já tem o slot pronto, só falta dado).
+- A busca de exercícios no editor (`ExerciseEditor`) já retorna do catálogo — basta incluir `image_url` no select e usar quando o personal selecionar um item da lista.
 
-### Cron diário (edge function + pg_cron)
-- Nova edge function `check-workout-expiry`:
-  - Busca planos `status = 'ativa'`, `expires_at` entre hoje e hoje+7 dias e `expiry_warning_sent_at IS NULL` → cria 2 notificações (aluno + personal) e marca timestamp.
-  - Busca planos `status = 'ativa'`, `expires_at <= now()` e `expired_notified_at IS NULL` → cria 2 notificações de vencimento e marca timestamp.
-- Agendamento via `pg_cron` rodando 1x ao dia.
+**4. Compatibilidade**
+- Exercícios da série que não baterem por nome no catálogo continuam com o ícone genérico (sem quebra).
+- Não precisa migrar dados antigos.
 
-### Frontend
-- **PersonalStudentDetail.tsx** e **WorkoutAssistant/PersonalAssistant**: ao aprovar/criar a série, seletor (1/2/3 meses) e gravar `validity_months` + calcular `expires_at`.
-- **MyWorkout.tsx** (aluno) e **PersonalStudentDetail.tsx** (personal): badge "Vence em X dias" / "Vencida hoje" / "Vencida há X dias".
-- **lib/notifications.ts**: helpers `notifySeriePrestesAVencer` e `notifySerieVencida` (aluno e personal).
+### Fora do escopo
+- Vídeos demonstrativos.
+- Upload de imagem por exercício individual da série (personalizado por aluno).
+- Geração automática por IA.
 
-## Fora de escopo
-- Renovação automática da série (continua manual: o personal cria nova série quando vencer).
-- Bloquear o aluno de treinar com série vencida (apenas aviso visual).
-
-Confirma assim que quiser que eu implemente.
+### Aprovação
+Aprove para eu rodar a migração e implementar as telas.

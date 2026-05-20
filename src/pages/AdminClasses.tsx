@@ -163,9 +163,14 @@ const AdminClasses = () => {
           <ArrowLeft className="w-4 h-4" /> Voltar
         </button>
 
-        <h1 className="text-4xl md:text-5xl font-heading tracking-wider mb-8">
-          GERENCIAR <span className="text-gradient">AULAS</span>
-        </h1>
+        <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
+          <h1 className="text-4xl md:text-5xl font-heading tracking-wider">
+            GERENCIAR <span className="text-gradient">AULAS</span>
+          </h1>
+          <Button variant="outline" onClick={() => navigate("/admin/exercises")}>
+            Catálogo de exercícios
+          </Button>
+        </div>
 
         {/* Upload Form */}
         <div className="bg-card rounded-xl p-6 md:p-8 border border-border mb-12">

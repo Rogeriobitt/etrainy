@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import StudentSignup from "./pages/StudentSignup";
 import PersonalSignup from "./pages/PersonalSignup";
 import AdminClasses from "./pages/AdminClasses";
+import AdminExercises from "./pages/AdminExercises";
 import ClassPlayer from "./pages/ClassPlayer";
 import Profile from "./pages/Profile";
 import TreinosPreview from "./pages/TreinosPreview";
@@ -40,6 +41,7 @@ const App = () => (
             <Route path="/cadastro/aluno" element={<StudentSignup />} />
             <Route path="/cadastro/personal" element={<PersonalSignup />} />
             <Route path="/admin/classes" element={<AdminClasses />} />
+            <Route path="/admin/exercises" element={<AdminExercises />} />
             <Route path="/class/:id" element={<ClassPlayer />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/treinos-preview" element={<TreinosPreview />} />
