@@ -105,8 +105,8 @@ const ExerciseEditor = ({ exercise, exerciseId, dayId, onUpdate, onRemove }: Exe
       <div className="flex items-start gap-3">
         {/* Thumbnail */}
         <div className="w-14 h-14 rounded-lg bg-secondary border border-border flex items-center justify-center shrink-0 overflow-hidden">
-          {exercise.image_url ? (
-            <img src={exercise.image_url} alt={exercise.exercise_name} className="w-full h-full object-cover" />
+          {displayImage ? (
+            <img src={displayImage} alt={exercise.exercise_name} className="w-full h-full object-cover" loading="lazy" />
           ) : (
             <Dumbbell className="w-6 h-6 text-muted-foreground" />
           )}
