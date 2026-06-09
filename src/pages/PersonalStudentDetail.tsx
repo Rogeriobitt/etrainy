@@ -306,6 +306,15 @@ const PersonalStudentDetail = () => {
           </div>
         ) : (
           <>
+            {/* Pending review banner */}
+            {plan.status === "aguardando_revisao_personal" && (
+              <div className="bg-yellow-500/10 border border-yellow-500/40 rounded-xl p-4 mb-6 text-sm">
+                <p className="font-medium text-yellow-300 mb-1">⚠ Série ainda não enviada ao aluno</p>
+                <p className="text-yellow-200/80 text-xs">
+                  Revise os exercícios abaixo (trocar, editar séries/reps, adicionar ou remover) e clique em <strong>"Aprovar série e enviar para o aluno"</strong> quando estiver pronta. Até lá, o aluno continuará vendo a série anterior aprovada.
+                </p>
+              </div>
+            )}
             {/* Plan info */}
             <div className="bg-card border border-border rounded-xl p-4 mb-6 flex flex-wrap gap-x-6 gap-y-2 text-sm items-center">
               <span><span className="text-muted-foreground">Divisão:</span> {plan.division}</span>
