@@ -120,6 +120,10 @@ const PersonalAssistant = () => {
         );
       }
 
+      toast({
+        title: "Série criada com sucesso!",
+        description: "Revise os exercícios e clique em \"Aprovar série e enviar para o aluno\" para liberá-la.",
+      });
       navigate(`/personal/alunos/${selectedStudentId}`);
     } catch (err) {
       console.error("Error generating workout:", err);
