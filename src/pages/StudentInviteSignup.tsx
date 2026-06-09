@@ -76,8 +76,24 @@ const StudentInviteSignup = () => {
       const userId = authData.user?.id;
       if (!userId) throw new Error("Erro ao criar conta");
 
-      // 2. Update profile with student data
-      const personalTrainerId = invitation.personal_trainer_id;
+      // 2. Ensure we have an authenticated session before any RLS-protected writes.
+      // When email confirmation is off, signUp returns a session immediately; otherwise we sign in.
+      let session = authData.session;
+      if (!session) {
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: invitation.student_email,
+          password,
+        });
+        if (signInError) throw signInError;
+        session = signInData.session;
+      }
+
+      // 3. Atomically link this user to the inviting personal trainer (SECURITY DEFINER RPC).
+      // This is the source of truth for the trainer link — independent of profile RLS timing.
+      const { error: linkError } = await supabase.rpc("accept_invitation" as any, { _token: token });
+      if (linkError) throw linkError;
+
+      // 4. Update the rest of the profile fields (best-effort; trainer link is already saved).
       await persistProfileAfterSignup(userId, {
         full_name: invitation.student_name,
         email: invitation.student_email,
@@ -87,11 +103,9 @@ const StudentInviteSignup = () => {
         height: height ? parseFloat(height) : null,
         goal: goal || null,
         has_personal: true,
-        personal_trainer_id: personalTrainerId,
+        personal_trainer_id: invitation.personal_trainer_id,
       });
 
-      // 3. Mark invitation as used (via SECURITY DEFINER RPC)
-      await supabase.rpc("consume_invitation" as any, { _token: token });
 
       setDone(true);
     } catch (err: any) {
