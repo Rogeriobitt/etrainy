@@ -527,6 +527,28 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      consume_invitation: { Args: { _token: string }; Returns: boolean }
+      create_notification: {
+        Args: {
+          _link?: string
+          _message: string
+          _title: string
+          _type: string
+          _user_id: string
+        }
+        Returns: string
+      }
+      get_invitation_by_token: {
+        Args: { _token: string }
+        Returns: {
+          id: string
+          personal_name: string
+          personal_trainer_id: string
+          status: string
+          student_email: string
+          student_name: string
+        }[]
+      }
       get_personal_by_code: {
         Args: { _code: string }
         Returns: {
@@ -543,6 +565,7 @@ export type Database = {
           personal_code: string
         }[]
       }
+      get_personal_user_id: { Args: { _personal_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
