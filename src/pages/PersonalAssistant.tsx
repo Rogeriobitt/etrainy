@@ -25,6 +25,7 @@ const LOCATIONS: Record<string, string> = { gym: "Academia", home_weights: "Em c
 const PersonalAssistant = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const preselectedStudent = searchParams.get("aluno");
 
