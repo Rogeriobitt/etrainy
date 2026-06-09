@@ -527,6 +527,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_invitation: { Args: { _token: string }; Returns: string }
       consume_invitation: { Args: { _token: string }; Returns: boolean }
       create_notification: {
         Args: {
