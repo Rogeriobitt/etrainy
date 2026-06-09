@@ -55,6 +55,7 @@ const MyWorkout = () => {
         .from("workout_plans")
         .select("*")
         .eq("user_id", user!.id)
+        .eq("status", "ativa")
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();

@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Loader2, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
 import { selectExercisesForDay } from "@/lib/exerciseSelector";
 import { computeExpiresAt, VALIDITY_OPTIONS } from "@/lib/workoutValidity";
+import { useToast } from "@/hooks/use-toast";
 
 const DIVISION_MAP: Record<number, { division: string; description: string; workouts: { name: string; muscles: string }[] }> = {
   2: { division: "A/B", description: "Divisão sugerida: A/B (superior/inferior).", workouts: [{ name: "Treino A", muscles: "Peito + Costas + Ombros" }, { name: "Treino B", muscles: "Pernas + Bíceps + Tríceps" }] },
@@ -24,6 +25,7 @@ const LOCATIONS: Record<string, string> = { gym: "Academia", home_weights: "Em c
 const PersonalAssistant = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [searchParams] = useSearchParams();
   const preselectedStudent = searchParams.get("aluno");
 
@@ -118,6 +120,10 @@ const PersonalAssistant = () => {
         );
       }
 
+      toast({
+        title: "Série criada com sucesso!",
+        description: "Revise os exercícios e clique em \"Aprovar série e enviar para o aluno\" para liberá-la.",
+      });
       navigate(`/personal/alunos/${selectedStudentId}`);
     } catch (err) {
       console.error("Error generating workout:", err);
