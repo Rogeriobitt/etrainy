@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, Loader2, Sparkles, CheckCircle2, AlertTriangle } from "lucide-react";
 import { selectExercisesForDay } from "@/lib/exerciseSelector";
 import { computeExpiresAt, VALIDITY_OPTIONS } from "@/lib/workoutValidity";
+import { useToast } from "@/hooks/use-toast";
 
 const DIVISION_MAP: Record<number, { division: string; description: string; workouts: { name: string; muscles: string }[] }> = {
   2: { division: "A/B", description: "Divisão sugerida: A/B (superior/inferior).", workouts: [{ name: "Treino A", muscles: "Peito + Costas + Ombros" }, { name: "Treino B", muscles: "Pernas + Bíceps + Tríceps" }] },
