@@ -264,19 +264,17 @@ export async function evolveWorkoutPlan(
 
   // Notify personal if linked
   if (hasPersonal && profile?.personal_trainer_id) {
-    const { data: pt } = await supabase
-      .from("personal_trainers")
-      .select("user_id")
-      .eq("id", profile.personal_trainer_id)
-      .maybeSingle();
+    const { data: trainerUserId } = await supabase.rpc("get_personal_user_id" as any, {
+      _personal_id: profile.personal_trainer_id,
+    });
     const { data: alunoProfile } = await supabase
       .from("profiles")
       .select("full_name")
       .eq("user_id", userId)
       .maybeSingle();
-    if (pt?.user_id) {
+    if (trainerUserId) {
       await notifyPersonalSerieEvoluida(
-        pt.user_id,
+        trainerUserId as unknown as string,
         alunoProfile?.full_name || "Aluno",
         userId
       );

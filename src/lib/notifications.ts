@@ -9,13 +9,12 @@ interface CreateNotificationParams {
 }
 
 export async function createNotification(params: CreateNotificationParams) {
-  const { error } = await supabase.from("notifications").insert({
-    user_id: params.userId,
-    type: params.type,
-    title: params.title,
-    message: params.message,
-    link: params.link || null,
-    read: false,
+  const { error } = await supabase.rpc("create_notification" as any, {
+    _user_id: params.userId,
+    _type: params.type,
+    _title: params.title,
+    _message: params.message,
+    _link: params.link || null,
   });
   if (error) console.error("Error creating notification:", error);
 }
