@@ -33,28 +33,19 @@ const StudentInviteSignup = () => {
     const loadInvitation = async () => {
       if (!token) { setInvalid(true); setLoadingInvite(false); return; }
 
-      const { data, error } = await supabase
-        .from("student_invitations" as any)
-        .select("*")
-        .eq("token", token)
-        .eq("status", "pending")
-        .maybeSingle();
+      const { data, error } = await supabase.rpc("get_invitation_by_token" as any, {
+        _token: token,
+      });
 
-      if (error || !data) {
+      const row = Array.isArray(data) ? (data as any)[0] : (data as any);
+      if (error || !row) {
         setInvalid(true);
         setLoadingInvite(false);
         return;
       }
 
-      setInvitation(data);
-      let trainerName = (data as any).personal_name as string | null;
-      if (!trainerName && (data as any).personal_trainer_id) {
-        const { data: pt } = await supabase.rpc("get_personal_public_info" as any, {
-          _personal_id: (data as any).personal_trainer_id,
-        });
-        trainerName = (pt as any)?.[0]?.full_name || null;
-      }
-      setPersonalName(trainerName || "seu professor");
+      setInvitation(row);
+      setPersonalName(row.personal_name || "seu professor");
       setLoadingInvite(false);
     };
     loadInvitation();
@@ -99,11 +90,8 @@ const StudentInviteSignup = () => {
         personal_trainer_id: personalTrainerId,
       });
 
-      // 3. Mark invitation as used
-      await supabase
-        .from("student_invitations" as any)
-        .update({ status: "used", used_at: new Date().toISOString() } as any)
-        .eq("id", invitation.id);
+      // 3. Mark invitation as used (via SECURITY DEFINER RPC)
+      await supabase.rpc("consume_invitation" as any, { _token: token });
 
       setDone(true);
     } catch (err: any) {
