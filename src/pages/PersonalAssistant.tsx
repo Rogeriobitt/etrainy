@@ -23,7 +23,7 @@ const LEVELS: Record<string, string> = { beginner: "Iniciante", intermediate: "I
 const LOCATIONS: Record<string, string> = { gym: "Academia", home_weights: "Em casa com pesos livres", home_bodyweight: "Em casa sem equipamentos" };
 
 const PersonalAssistant = () => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isAdmin } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
@@ -39,6 +39,8 @@ const PersonalAssistant = () => {
   const [injury, setInjury] = useState("");
   const [generating, setGenerating] = useState(false);
   const [validityMonths, setValidityMonths] = useState<1 | 2 | 3>(1);
+
+  const isSelf = !!user && selectedStudentId === user.id;
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/auth", { replace: true });
@@ -85,7 +87,8 @@ const PersonalAssistant = () => {
   const divisionInfo = DIVISION_MAP[daysPerWeek] || DIVISION_MAP[3];
 
   const handleGenerate = async () => {
-    if (!personal?.id || !selectedStudentId) return;
+    if (!selectedStudentId) return;
+    if (!isSelf && !personal?.id) return;
     setGenerating(true);
     try {
       const { data: plan, error: planError } = await supabase
@@ -97,8 +100,8 @@ const PersonalAssistant = () => {
           days_per_week: daysPerWeek,
           division: divisionInfo.division,
           training_location: location,
-          status: "aguardando_revisao_personal",
-          personal_trainer_id: personal.id,
+          status: isSelf ? "ativa" : "aguardando_revisao_personal",
+          personal_trainer_id: isSelf ? null : personal!.id,
           validity_months: validityMonths,
         })
         .select()
@@ -122,15 +125,18 @@ const PersonalAssistant = () => {
 
       toast({
         title: "Série criada com sucesso!",
-        description: "Revise os exercícios e clique em \"Aprovar série e enviar para o aluno\" para liberá-la.",
+        description: isSelf
+          ? "Sua série está ativa e disponível em Minha Série."
+          : "Revise os exercícios e clique em \"Aprovar série e enviar para o aluno\" para liberá-la.",
       });
-      navigate(`/personal/alunos/${selectedStudentId}`);
+      navigate(isSelf ? "/treinos/minha-serie" : `/personal/alunos/${selectedStudentId}`);
     } catch (err) {
       console.error("Error generating workout:", err);
     } finally {
       setGenerating(false);
     }
   };
+
 
   if (authLoading) {
     return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
@@ -168,6 +174,9 @@ const PersonalAssistant = () => {
                 className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none mb-6"
               >
                 <option value="">Escolha um aluno...</option>
+                {isAdmin && user && (
+                  <option value={user.id}>Eu mesmo (Admin)</option>
+                )}
                 {students?.map((s) => (
                   <option key={s.user_id} value={s.user_id}>{s.full_name || "Aluno sem nome"}</option>
                 ))}
