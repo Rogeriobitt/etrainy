@@ -106,24 +106,6 @@ const PersonalAssistant = () => {
         })
         .select()
         .single();
-
-    setGenerating(true);
-    try {
-      const { data: plan, error: planError } = await supabase
-        .from("workout_plans")
-        .insert({
-          user_id: selectedStudentId,
-          objective,
-          level,
-          days_per_week: daysPerWeek,
-          division: divisionInfo.division,
-          training_location: location,
-          status: "aguardando_revisao_personal",
-          personal_trainer_id: personal.id,
-          validity_months: validityMonths,
-        })
-        .select()
-        .single();
       if (planError) throw planError;
 
       for (let i = 0; i < divisionInfo.workouts.length; i++) {
@@ -143,15 +125,18 @@ const PersonalAssistant = () => {
 
       toast({
         title: "Série criada com sucesso!",
-        description: "Revise os exercícios e clique em \"Aprovar série e enviar para o aluno\" para liberá-la.",
+        description: isSelf
+          ? "Sua série está ativa e disponível em Minha Série."
+          : "Revise os exercícios e clique em \"Aprovar série e enviar para o aluno\" para liberá-la.",
       });
-      navigate(`/personal/alunos/${selectedStudentId}`);
+      navigate(isSelf ? "/treinos/minha-serie" : `/personal/alunos/${selectedStudentId}`);
     } catch (err) {
       console.error("Error generating workout:", err);
     } finally {
       setGenerating(false);
     }
   };
+
 
   if (authLoading) {
     return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
