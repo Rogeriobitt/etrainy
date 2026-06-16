@@ -1,61 +1,31 @@
-# Correção: série da IA não aparece para o aluno + edição completa pelo personal
+## Plano
 
-## Diagnóstico
+1. **Confirmar os registros envolvidos**
+   - Identificar a conta antiga da Mariana com email digitado errado.
+   - Identificar a conta nova/correta criada via convite.
+   - Confirmar quais séries pertencem à conta antiga e seus status atuais.
 
-Após investigar o código e os dados:
+2. **Migrar as séries para a conta nova**
+   - Atualizar os `workout_plans` da conta antiga para apontarem para o `user_id` da conta nova.
+   - Manter todos os dias e exercícios já cadastrados, porque eles estão ligados aos planos e acompanham a migração automaticamente.
+   - Preservar os status atuais: a série ativa continua ativa; a série aguardando revisão continua aguardando aprovação do professor.
 
-**1. Por que o aluno não está vendo a série criada pela IA**
+3. **Garantir vínculo correto com o professor Daniel**
+   - Confirmar que o perfil novo da Mariana continua com `personal_trainer_id` do Daniel e `has_personal = true`.
+   - Ajustar os planos migrados para manterem o `personal_trainer_id` do Daniel, se necessário.
 
-Quando o personal gera uma série pela IA, ela é criada com status `aguardando_revisao_personal` (linha 98 de `PersonalAssistant.tsx`). Isso é proposital: a série precisa ser revisada e aprovada pelo personal antes de ir para o aluno. Só vira `ativa` quando o personal clica em **"Aprovar série e enviar para o aluno"** dentro da tela do aluno (`PersonalStudentDetail.tsx`).
+4. **Arquivar a conta antiga sem apagar histórico**
+   - Deixar a conta antiga sem vínculo ativo com o professor para evitar confusão na lista de alunos.
+   - Não apagar dados, para preservar rastreabilidade caso precise consultar depois.
 
-Confirmado no banco: o aluno em questão tem 2 séries — uma `ativa` (antiga) e uma `aguardando_revisao_personal` (nova, criada pela IA). O personal ainda não aprovou a nova.
-
-**Bug real:** A tela "Minha Série" (`MyWorkout.tsx`) busca a série mais recente sem filtrar pelo status. Resultado: a série nova "aguardando revisão" sobrepõe a antiga "ativa", e o aluno vê uma série que ainda não foi liberada — ou vê um treino travado. O comportamento correto é o aluno continuar vendo a série ativa antiga até o personal aprovar a nova.
-
-**2. Edição da série pelo personal**
-
-A edição completa já existe na tela `PersonalStudentDetail.tsx` (`/personal/alunos/:studentId`), via componente `ExerciseEditor`:
-- Trocar exercício (busca no catálogo + filtro por grupo muscular, ou digitar nome livre)
-- Editar séries e repetições
-- Adicionar exercício novo
-- Remover exercício (botão lixeira)
-- Adicionar observações
-- Salvar alterações ou aprovar e enviar ao aluno
-
-Após gerar a série com IA, o sistema já redireciona o personal direto para essa tela. O que pode estar faltando é deixar mais claro que ele **precisa aprovar** antes do aluno ver.
-
-## Mudanças propostas
-
-### 1. `src/pages/MyWorkout.tsx` — filtrar por status `ativa`
-Trocar a query que busca o último plano para exigir `status = 'ativa'`. Assim, séries pendentes de revisão não substituem a série ativa atual do aluno.
-
-```ts
-.eq("user_id", user!.id)
-.eq("status", "ativa")
-.order("created_at", { ascending: false })
-.limit(1)
-```
-
-Efeito: aluno continua vendo a série atual aprovada até o personal aprovar a nova. Se nunca teve série aprovada, vê o estado vazio (já existente).
-
-### 2. `src/pages/PersonalStudentDetail.tsx` — banner de aviso quando há série pendente
-Quando `plan.status === "aguardando_revisao_personal"`, exibir um banner amarelo no topo da tela:
-
-> ⚠ Esta série ainda **não foi enviada ao aluno**. Revise os exercícios e clique em **"Aprovar série e enviar para o aluno"** quando estiver pronta.
-
-Isso evita a confusão atual em que o personal acha que já enviou.
-
-### 3. (Opcional, recomendado) Toast de confirmação após gerar com IA
-Em `PersonalAssistant.tsx`, após o `navigate(...)`, mostrar um toast: *"Série criada! Revise os exercícios e clique em Aprovar para enviar ao aluno."*
-
-## O que não muda
-
-- A capacidade de editar (trocar exercício, mudar séries/reps, apagar, adicionar) já existe e continua funcionando exatamente como está em `ExerciseEditor` + `PersonalStudentDetail`.
-- Validade da série, notificações e fluxo de aprovação permanecem iguais.
-- Nenhuma mudança de banco de dados é necessária.
+5. **Verificar o resultado**
+   - Conferir se a conta nova da Mariana passa a ter as séries.
+   - Confirmar se existe pelo menos uma série com status `ativa`, pois só essas aparecem para a aluna.
+   - Informar se Daniel ainda precisa aprovar a série mais recente que está em revisão.
 
 ## Detalhes técnicos
 
-- Arquivos editados: `src/pages/MyWorkout.tsx`, `src/pages/PersonalStudentDetail.tsx`, `src/pages/PersonalAssistant.tsx`.
-- Sem migrations.
-- Sem mudança em RLS (já permite o aluno ver suas próprias séries).
+- A alteração será feita diretamente nos dados existentes do backend, não no código da aplicação.
+- Não será recriada nenhuma série.
+- Não será apagado nenhum treino, dia ou exercício.
+- Se a série nova continuar com status `aguardando_revisao_personal`, ela não aparecerá para a aluna até Daniel aprovar pelo app.
