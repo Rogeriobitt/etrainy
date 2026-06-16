@@ -6,7 +6,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 
 const PersonalRoute = ({ children }: { children: ReactNode }) => {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, isAdmin } = useAuth();
 
   const { data, isLoading } = useQuery({
     queryKey: ["is-personal", user?.id],
@@ -30,9 +30,10 @@ const PersonalRoute = ({ children }: { children: ReactNode }) => {
   }
 
   if (!user) return <Navigate to="/auth" replace />;
-  if (!data) return <Navigate to="/dashboard/aluno" replace />;
+  if (!data && !isAdmin) return <Navigate to="/dashboard/aluno" replace />;
 
   return <>{children}</>;
 };
+
 
 export default PersonalRoute;
