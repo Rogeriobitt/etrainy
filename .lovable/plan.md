@@ -1,37 +1,37 @@
-## Liberar criação de série do ADM para ele mesmo
+## Melhorias no upload de vídeo-aulas (painel ADM)
 
-Hoje a tela "Criar Série" (`PersonalAssistant`) só lista alunos vinculados ao personal. Como o ADM não tem alunos, ele não consegue avançar. Vou liberar um modo "criar para mim mesmo" exclusivo para ADM.
+Implementar as 3 melhorias propostas e reorganizar o painel de cadastro de aulas.
 
-### Mudanças
+### 1. Aumentar limite de upload
+- Atualizar bucket `class-videos` para aceitar arquivos de até **2 GB** (`file_size_limit = 2147483648`) e restringir mime types para `video/mp4`, `video/webm`, `video/quicktime`.
+- Substituir o `supabase.storage.upload` simples por **upload com progresso** (usando `XMLHttpRequest` via endpoint `storage/v1/object/...` com header de auth) para mostrar uma barra `<Progress>` durante o envio do vídeo.
 
-1. **`src/pages/PersonalAssistant.tsx`**
-   - Detectar se o usuário é admin (`isAdmin` do `AuthContext`).
-   - Se for admin, adicionar uma opção fixa no topo do select do Passo 0: **"Eu mesmo (Admin)"** com `value = user.id`.
-   - Quando o admin selecionar a si mesmo:
-     - Carregar o próprio `profiles` em vez do perfil do aluno.
-     - No insert do `workout_plans`, gravar `user_id = user.id` e **omitir** `personal_trainer_id` (deixar `null`) com `status = 'ativa'` direto (admin não precisa de aprovação dele mesmo).
-   - Toast e redirect: ir para `/treinos/minha-serie` em vez de `/personal/alunos/:id`.
+### 2. Validação de formato e proporção
+- No `onChange` do input de vídeo:
+  - Rejeitar arquivos cujo `type` não comece com `video/` ou que não sejam `mp4/webm/mov`.
+  - Carregar metadata via `<video>` oculto para ler `videoWidth/videoHeight` e validar proporção **16:9** (com tolerância ±2%). Se estiver fora, mostrar aviso (não bloquear, só alertar) recomendando reenviar em 16:9.
+  - Exibir tamanho do arquivo em MB e duração detectada.
+- Mesma checagem para thumbnail: aceitar só `image/jpeg`, `image/png`, `image/webp`, alertar se não for 16:9 e bloquear se > 1 MB.
 
-2. **RLS — permitir admin inserir plano para si**
-   - As políticas atuais de `workout_plans` para INSERT exigem `user_id = auth.uid()` (já existe) ou `personal_trainer_id ∈ personals do usuário`. A política "Users can insert their own workout plans" já cobre o caso `user_id = auth.uid()` quando `personal_trainer_id` é null. Validar isso e, se necessário, adicionar política explícita:
-     ```
-     CREATE POLICY "Admins can insert own plans"
-       ON public.workout_plans FOR INSERT TO authenticated
-       WITH CHECK (auth.uid() = user_id AND public.has_role(auth.uid(), 'admin'));
-     ```
-   - Mesmo princípio para `workout_days` e `workout_exercises` — as policies "Users can insert their own…" já permitem inserção quando o plan pertence a `auth.uid()`, então não precisa mexer.
+### 3. Thumbnail automática
+- Adicionar botão **"Gerar thumbnail do vídeo"** (habilitado depois que o vídeo é selecionado).
+- Ao clicar: criar `<video>` em memória, navegar até `currentTime = duration * 0.1` (ou 2s), desenhar o frame em um `<canvas>` 1280×720 e exportar como `image/jpeg` qualidade 0.85.
+- O blob resultante vira o `thumbnailFile` (substitui o upload manual, mas o manual continua disponível).
+- Mostrar preview da thumbnail gerada antes de enviar.
 
-3. **Acesso à rota**
-   - Liberar `/assistente/treino/personal` também para admins (hoje `PersonalRoute` só deixa passar quem está em `personal_trainers`).
-   - Atualizar `PersonalRoute` para aceitar admin OU personal trainer.
-
-### Resultado
-
-- Admin entra em "Criar Série", escolhe "Eu mesmo (Admin)", segue os 4 passos e a série fica salva no próprio perfil dele, já como `ativa`, visível em `/treinos/minha-serie`.
-- Personals continuam funcionando exatamente como antes.
-- Alunos comuns sem alteração.
+### 4. Ajustes no painel ADM (`src/pages/AdminClasses.tsx`)
+- Atualizar texto do label do vídeo: "Vídeo (MP4/WebM/MOV, máx. 2GB, 16:9)".
+- Mostrar **barra de progresso** durante upload do vídeo (e estado "Processando..." enquanto insere o registro).
+- Mostrar **preview** do vídeo e da thumbnail (manual ou gerada) antes do envio.
+- Reorganizar o form em duas colunas mais claras: metadados à esquerda, mídia (vídeo + thumbnail + preview + ações) à direita.
+- Adicionar dica curta de boas práticas (1080p, ~5 Mbps, 30 fps) abaixo do campo de vídeo.
 
 ### Detalhes técnicos
+- Bucket: `supabase--storage_update_bucket` em `class-videos` com novo `file_size_limit` e `allowed_mime_types`.
+- Upload com progresso: `fetch` não expõe progress; usar `XMLHttpRequest` POST para `${SUPABASE_URL}/storage/v1/object/class-videos/${path}` com headers `Authorization: Bearer <access_token>` e `x-upsert: false`. Depois chamar `getPublicUrl` normalmente.
+- Captura de frame: usa `HTMLVideoElement` + `<canvas>` (sem dependências novas). `crossOrigin` não é necessário pois o vídeo ainda está local (`URL.createObjectURL`).
+- Sem mudanças de schema, só ajuste de bucket + frontend.
 
-- Sem mudança de schema; só uma policy extra de garantia em `workout_plans`.
-- Mudança restrita a 2 arquivos frontend (`PersonalAssistant.tsx`, `PersonalRoute.tsx`) + 1 migration mínima.
+### Arquivos
+- `src/pages/AdminClasses.tsx` (refactor do formulário, validações, progresso, gerador de thumb)
+- Bucket `class-videos` (config via tool)
