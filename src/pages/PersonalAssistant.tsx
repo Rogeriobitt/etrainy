@@ -174,6 +174,9 @@ const PersonalAssistant = () => {
                 className="w-full bg-secondary border border-border rounded-lg px-4 py-3 text-sm focus:ring-2 focus:ring-primary outline-none mb-6"
               >
                 <option value="">Escolha um aluno...</option>
+                {isAdmin && user && (
+                  <option value={user.id}>Eu mesmo (Admin)</option>
+                )}
                 {students?.map((s) => (
                   <option key={s.user_id} value={s.user_id}>{s.full_name || "Aluno sem nome"}</option>
                 ))}
