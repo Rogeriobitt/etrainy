@@ -23,7 +23,9 @@ import PersonalPending from "./pages/PersonalPending";
 import PersonalAssistant from "./pages/PersonalAssistant";
 import WorkoutAdapt from "./pages/WorkoutAdapt";
 import StudentInviteSignup from "./pages/StudentInviteSignup";
+import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
+
 import PersonalRoute from "./components/PersonalRoute";
 
 const queryClient = new QueryClient();
