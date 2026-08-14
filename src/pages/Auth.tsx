@@ -18,8 +18,15 @@ const Auth = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
+  const rawNext = searchParams.get("next");
+  const nextPath = rawNext && /^\/[^/\\]/.test(rawNext) ? rawNext : null;
+
   useEffect(() => {
     if (!user) return;
+    if (nextPath) {
+      window.location.replace(nextPath);
+      return;
+    }
     // Redirect based on role: check if personal trainer
     const redirect = async () => {
       const { data } = await supabase
@@ -34,7 +41,8 @@ const Auth = () => {
       }
     };
     redirect();
-  }, [user, navigate]);
+  }, [user, navigate, nextPath]);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
