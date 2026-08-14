@@ -1,0 +1,153 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://zyjvhralwvbbkloogrhj.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "trainylab",
+      "version": "0.1.0",
+      "title": "TrainyLab"
+    },
+    "tools": [
+      {
+        "name": "get_my_profile",
+        "title": "Get my profile",
+        "description": "Return the signed-in user's TrainyLab profile: name, goal, level, biometrics, and whether they are a student with a personal trainer or a trainer themselves.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_students",
+        "title": "List my students",
+        "description": "For a signed-in personal trainer: list the students linked to them, with name, email, goal, level and their current workout plan status.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_workout_plan",
+        "title": "Get workout plan",
+        "description": "Return a full workout plan with its training days and exercises (sets, reps, notes). Defaults to the signed-in user's active plan; a personal trainer can pass a student's user id, or any accessible plan id.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "student_user_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "User id of a student. Trainers only; omit to read your own plan."
+            },
+            "plan_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Specific workout plan id."
+            },
+            "status": {
+              "type": "string",
+              "description": "Filter by plan status, e.g. 'ativa' or 'aguardando_revisao_personal'."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "search_exercises",
+        "title": "Search exercise catalog",
+        "description": "Search TrainyLab's exercise catalog by name, muscle group, equipment or level. Useful to pick exercises when planning or adapting a workout.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Text to match against the exercise name."
+            },
+            "muscle_group": {
+              "type": "string",
+              "description": "Muscle group filter, e.g. 'peito'."
+            },
+            "equipment_type": {
+              "type": "string",
+              "description": "Equipment filter, e.g. 'academia' or 'casa'."
+            },
+            "level": {
+              "type": "string",
+              "description": "Suggested level filter, e.g. 'iniciante'."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "description": "Max results (default 25)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_notifications",
+        "title": "List my notifications",
+        "description": "List the signed-in user's TrainyLab notifications (workout approvals, expiry warnings, new students), newest first.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "only_unread": {
+              "type": "boolean",
+              "description": "Return only unread notifications."
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "description": "Max results (default 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
