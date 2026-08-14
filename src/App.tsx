@@ -23,7 +23,9 @@ import PersonalPending from "./pages/PersonalPending";
 import PersonalAssistant from "./pages/PersonalAssistant";
 import WorkoutAdapt from "./pages/WorkoutAdapt";
 import StudentInviteSignup from "./pages/StudentInviteSignup";
+import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
+
 import PersonalRoute from "./components/PersonalRoute";
 
 const queryClient = new QueryClient();
@@ -55,6 +57,8 @@ const App = () => (
             <Route path="/personal/pendencias" element={<PersonalRoute><PersonalPending /></PersonalRoute>} />
             <Route path="/treinos/adaptar" element={<WorkoutAdapt />} />
             <Route path="/convite/:token" element={<StudentInviteSignup />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+
             <Route path="/treinos/historico" element={<NotFound />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
