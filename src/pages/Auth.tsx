@@ -59,7 +59,7 @@ const Auth = () => {
           password,
           options: {
             data: { full_name: fullName },
-            emailRedirectTo: window.location.origin,
+            emailRedirectTo: nextPath ? window.location.origin + nextPath : window.location.origin,
           },
         });
         if (error) throw error;
